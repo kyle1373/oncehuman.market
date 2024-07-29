@@ -161,7 +161,7 @@ export default function Home(props) {
                   <h3 className="font-bold">{category.name}</h3>
                   {category.items.map((item, index) => (
                     <div
-                      key={item.id}
+                      key={item.id + index}
                       className={`flex items-center p-2 ${
                         index !== category.items.length - 1 && "border-b"
                       } border-neutral-700 cursor-pointer hover:bg-neutral-800 ${
@@ -244,8 +244,8 @@ export default function Home(props) {
       ) : (
         <div className="mt-8 text-neutral-300">
           {listingResults.length > 0 ? (
-            listingResults.map((entry) => {
-              return <ListingCard entry={entry}/>
+            listingResults.map((entry, index) => {
+              return <ListingCard key={index} entry={entry}/>
             })
           ) : (
             <p>{listingSearchMessage}</p>
