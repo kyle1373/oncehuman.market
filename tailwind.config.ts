@@ -13,6 +13,14 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        oncehuman: {
+          lightBlue: "#3fe6fc",
+          lightRed: "#fc3f6b",
+          darkRed: "#691629",
+          darkBlue: "#166169",
+        },
+      },
     },
   },
   plugins: [],

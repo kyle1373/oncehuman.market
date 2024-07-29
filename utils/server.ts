@@ -1,6 +1,7 @@
-import { UserData } from "next-auth/providers/42-school";
+
 import { getSession } from "next-auth/react";
 import supabaseAdmin from "./supabaseAdmin";
+import { UserData } from "@constants/types";
 
 export const getUserDataServer = async (req): Promise<UserData> => {
   try {

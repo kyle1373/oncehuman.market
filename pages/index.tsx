@@ -3,40 +3,27 @@ import { Inter } from "next/font/google";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { logServerStats } from "@utils/logger";
 import SEO from "@components/SEO";
+import Link from "next/link";
+import { getUserDataServer } from "@utils/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Home(props) {
   const { data: session, status } = useSession();
+
 
   return (
     <main>
-      <SEO/>
-      <div>
-        {JSON.stringify(session)}
-        {JSON.stringify(status)}
-
-        {session ? (
-          <>
-            <p>Welcome, {session.user.name}!</p>
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-        ) : (
-          <>
-            <p>You are not logged in</p>
-            <button onClick={() => signIn("discord")}>
-              Login with Discord
-            </button>
-          </>
-        )}
-      </div>
+      <SEO />
+      <Link href="/create-listing"> Create Listing</Link>
     </main>
   );
 }
 
 export const getServerSideProps = async ({ req, res }) => {
-  logServerStats(req, res);
+  // logServerStats(req, res);
+  const userData = await getUserDataServer(req);
   return {
-    props: {},
+    props: { userData },
   };
 };

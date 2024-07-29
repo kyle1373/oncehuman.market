@@ -34,3 +34,13 @@ body::before {
     text-wrap: balance;
   }
 }
+
+
+#nprogress .bar {
+  background: #fc3f6b !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #fc3f6b !important;
+  border-left-color: #fc3f6b !important;
+}

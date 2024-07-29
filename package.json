@@ -9,13 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/styled": "^11.13.0",
     "@supabase/supabase-js": "^2.44.4",
     "axios": "^1.7.2",
+    "framer-motion": "^11.3.19",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
+    "nprogress": "^0.2.0",
     "on-headers": "^1.0.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^5.2.1",
+    "react-spinners": "^0.14.1",
+    "styled-components": "^6.1.12",
     "supabase": "^1.187.3",
     "winston": "^3.13.1"
   },
