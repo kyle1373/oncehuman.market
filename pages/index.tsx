@@ -9,13 +9,16 @@ export default function Home(props) {
   const [results, setResults] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("Type something to search.");
+  const [modalActive, setModalActive] = useState(true); // Control modal visibility after selection
   const inputRef = useRef(null);
   const timeoutRef = useRef(null); // To store the timeout ID
+  const [selectedItem, setSelectedItem] = useState(null)
 
   useEffect(() => {
     if (!query) {
       setResults([]);
-      setShowModal(false);
+      setMessage("Type something to search.");
     } else {
       const handler = setTimeout(() => {
         fetchResults(query);
@@ -36,9 +39,13 @@ export default function Home(props) {
         params: { search },
       });
       setResults(response.data);
-      setShowModal(true);
+      if (modalActive) {
+        setShowModal(true);
+      }
+      setMessage(response.data.length > 0 ? "" : "No results found.");
     } catch (error) {
       console.error("Error fetching search results:", error);
+      setMessage("Error fetching search results.");
     } finally {
       setLoading(false);
     }
@@ -58,12 +65,17 @@ export default function Home(props) {
   }, []);
 
   const searchListings = (item) => {
-    console.log("Selected " + JSON.stringify(item))
+    setSelectedItem(item);
+    setQuery(item.name);
+    setModalActive(false); // Prevent the modal from showing again
+    setShowModal(false); // Close the modal when an item is selected
+    console.log("Selected " + JSON.stringify(item));
   }
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       clearTimeout(timeoutRef.current); // Clear any existing timeout
+      setModalActive(true); // Allow the modal to show if Enter is pressed
       fetchResults(query);
     }
   };
@@ -75,7 +87,10 @@ export default function Home(props) {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setModalActive(true); // Allow the modal to show if the query changes
+          }}
           onFocus={() => setShowModal(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search items..."
@@ -95,7 +110,7 @@ export default function Home(props) {
                     {category.items.map((item, index) => (
                       <div
                         key={item.id}
-                        className={`flex items-center p-2 ${index !== category.items.length - 1 && "border-b"} border-neutral-700 cursor-pointer hover:bg-neutral-800`}
+                        className={`flex items-center p-2 ${index !== category.items.length - 1 && "border-b"} border-neutral-700 cursor-pointer hover:bg-neutral-800 ${item.id === selectedItem?.id ? "bg-neutral-800" : ""}`}
                         onClick={() => searchListings(item)}
                       >
                         <img
@@ -110,7 +125,7 @@ export default function Home(props) {
                 ))
               ) : (
                 <div className="p-2 text-center text-neutral-400">
-                  {query.trim() === "" ? "Type something to search for items." : "No results found."}
+                  {message}
                 </div>
               )
             )}
