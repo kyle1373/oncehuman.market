@@ -1,11 +1,21 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider } from "next-auth/react";
+import Script from "next/script";
 
 export default function App({ Component, pageProps }) {
   return (
     <SessionProvider session={pageProps.session}>
+      {process.env.NODE_ENV === "production" && (
+        <>
+          <Script
+            async
+            src="https://stats.superfx.dev/script.js"
+            data-website-id="8f001ca2-6c2b-4c17-8824-19d8776952c7"
+          />
+        </>
+      )}
       <Component {...pageProps} />
     </SessionProvider>
   );
