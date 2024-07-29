@@ -61,9 +61,17 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
     useEffect(() => {
       const updateFormattedDate = () => {
-        setFormattedDate(
-          formatDistanceToNow(new Date(timestamp), { addSuffix: true })
-        );
+        const now = new Date().getTime();
+        const lastOnlineDate = new Date(timestamp).getTime();
+        const differenceInMinutes = (now - lastOnlineDate) / 1000 / 60;
+
+        if (differenceInMinutes < 5) {
+          setFormattedDate("online");
+        } else {
+          setFormattedDate(
+            `online ${formatDistanceToNow(lastOnlineDate, { addSuffix: true })}`
+          );
+        }
       };
 
       updateFormattedDate(); // Initial update
@@ -72,9 +80,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
       return () => clearInterval(interval);
     }, [timestamp]);
 
-    return <span className="italic">(online {formattedDate})</span>;
+    return <span className="italic">({formattedDate})</span>;
   };
-
   const sellingItem =
     entry.items_selling.length > 0 ? entry.items_selling[0] : null;
 
@@ -115,7 +122,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                       </h1>
                     </div>
                     {index < entry.items_asking.length - 1 && (
-                      <h1 key={index} className="mt-1">or</h1>
+                      <h1 key={index} className="mt-1">
+                        or
+                      </h1>
                     )}
                   </>
                 ))}
