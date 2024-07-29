@@ -3,6 +3,7 @@ import { useEffect } from "react";
 const useOnlineLogging = () => {
   useEffect(() => {
     let lastLoggedTime = Date.now();
+    let isFirstTime = true
 
     const logStatus = async () => {
       const currentTime = Date.now();
@@ -11,11 +12,12 @@ const useOnlineLogging = () => {
         console.log(document.visibilityState);
         console.log(currentTime - lastLoggedTime);
         if (
-          document.visibilityState !== "visible" ||
-          currentTime - lastLoggedTime < 50000
+          !isFirstTime && (document.visibilityState !== "visible" ||
+          currentTime - lastLoggedTime < 50000)
         ) {
           return;
         }
+        isFirstTime = false
         const response = await fetch("/api/log_status");
 
         if (!response.ok) {
@@ -35,6 +37,9 @@ const useOnlineLogging = () => {
     const intervalId = setInterval(() => {
       logStatus();
     }, 60000); // 60000ms = 1 minute
+
+    // Log status immediately on mount
+    logStatus();
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
