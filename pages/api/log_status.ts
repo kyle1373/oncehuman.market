@@ -1,18 +1,21 @@
-import { logServerStats } from '@utils/logger'
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { logServerStats } from "@utils/logger";
+import { getUserDataServer, logUserOnlineStatus } from "@utils/server";
+import supabaseAdmin from "@utils/supabaseAdmin";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { UserData } from "next-auth/providers/42-school";
+import { getSession, useSession } from "next-auth/react";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  logServerStats(req, res)
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const userData: UserData = await getUserDataServer(req);
 
-  if (req.method === 'GET') {
-    // Simulate a database operation that fails
-    try {
-      throw new Error('Database connection failed')
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' })
-    }
-  } else {
-    res.setHeader('Allow', ['GET'])
-    res.status(405).json({ error: `Method ${req.method} Not Allowed` })
+  if (!userData) {
+    return res.status(401).json({ error: "Unauthenticated" });
   }
+
+  await logUserOnlineStatus(userData.id)
+
+  return res.json({data: "User online status logged"});
 }

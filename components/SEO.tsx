@@ -1,4 +1,4 @@
-import { SEO_METADATA } from "@/constants";
+import { SEO_METADATA } from "@/constants/constants";
 import Head from "next/head";
 import React from "react";
 

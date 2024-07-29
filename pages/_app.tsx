@@ -3,8 +3,12 @@ import type { AppProps } from "next/app";
 
 import { SessionProvider } from "next-auth/react";
 import Script from "next/script";
+import useOnlineLogging from "@hooks/useOnlineLogging";
 
 export default function App({ Component, pageProps }) {
+
+  useOnlineLogging(); // Call the custom hook here
+
   return (
     <SessionProvider session={pageProps.session}>
       {process.env.NODE_ENV === "production" && (
