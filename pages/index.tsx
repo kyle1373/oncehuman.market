@@ -97,7 +97,7 @@ export default function Home(props) {
           className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
         />
         {showModal && (
-          <div className="absolute top-full left-8 right-8 mt-2 bg-black border border-neutral-600 rounded shadow-lg z-50 text-neutral-200 max-h-[300px] overflow-y-auto">
+          <div className="absolute top-full left-8 right-8 mt-2 bg-black border border-neutral-600 rounded shadow-lg z-50 text-neutral-200 max-h-[400px] overflow-y-auto">
             {loading ? (
               <div className="flex justify-center items-center p-4">
                 <ClipLoader color={"#ffffff"} loading={loading} />
