@@ -38,8 +38,9 @@ const TopbarWrapper = ({ children }) => {
     <div className="flex flex-row">
       <div className="fixed top-0 left-0 right-0 bg-neutral-800 h-14 px-4 flex justify-between items-center z-30 border-b-[1px] border-neutral-600">
         <Link href="/">
-          <h6 className="text-2xl font-bold text-oncehuman-lightBlue">
-            OnceHuman<span className="text-white">.</span><span className="text-oncehuman-lightRed">Market</span>
+          <h6 className="sm:text-2xl text-xl font-bold text-oncehuman-lightBlue flex items-end">
+            OnceHuman<span className="text-white">.</span>
+            <span className="text-oncehuman-lightRed">Market</span>
           </h6>
         </Link>
         {!!session ? (

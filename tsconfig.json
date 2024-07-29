@@ -25,14 +25,15 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "target": "esnext",
     "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "strictNullChecks": false
+    ]
   },
   "include": [
     "next-env.d.ts",
