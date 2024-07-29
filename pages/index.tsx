@@ -10,6 +10,7 @@ export default function Home(props) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
+  const timeoutRef = useRef(null); // To store the timeout ID
 
   useEffect(() => {
     if (!query) {
@@ -19,6 +20,8 @@ export default function Home(props) {
       const handler = setTimeout(() => {
         fetchResults(query);
       }, 500);
+
+      timeoutRef.current = handler;
 
       return () => {
         clearTimeout(handler);
@@ -60,7 +63,7 @@ export default function Home(props) {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      // clearTimeout(); // Clear any existing timeout
+      clearTimeout(timeoutRef.current); // Clear any existing timeout
       fetchResults(query);
     }
   };
