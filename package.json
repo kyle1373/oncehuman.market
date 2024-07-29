@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.44.4",
+    "axios": "^1.7.2",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
+    "on-headers": "^1.0.2",
     "react": "^18",
     "react-dom": "^18",
-    "supabase": "^1.187.3"
+    "supabase": "^1.187.3",
+    "winston": "^3.13.1"
   },
   "devDependencies": {
     "@types/node": "^20",

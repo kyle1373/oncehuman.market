@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { logServerStats } from "@utils/logger";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,4 +26,13 @@ export default function Home() {
       )}
     </div>
   );
+}
+
+export const getServerSideProps = async ({ req, res }) => {
+
+  logServerStats(req, res)
+  return {
+    props: {
+    },
+  }
 }
