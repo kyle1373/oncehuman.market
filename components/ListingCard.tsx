@@ -115,7 +115,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                       </h1>
                     </div>
                     {index < entry.items_asking.length - 1 && (
-                      <h1 className="mt-1">or</h1>
+                      <h1 key={index} className="mt-1">or</h1>
                     )}
                   </>
                 ))}

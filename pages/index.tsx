@@ -156,8 +156,8 @@ export default function Home(props) {
                 <ClipLoader color={"#ffffff"} loading={fetchingItems} />
               </div>
             ) : itemSearchResults.length > 0 ? (
-              itemSearchResults.map((category) => (
-                <div key={category.id} className="p-2">
+              itemSearchResults.map((category, index) => (
+                <div key={category.id + index} className="p-2">
                   <h3 className="font-bold">{category.name}</h3>
                   {category.items.map((item, index) => (
                     <div
