@@ -1,4 +1,3 @@
-
 import { getSession } from "next-auth/react";
 import supabaseAdmin from "./supabaseAdmin";
 import { UserData } from "@constants/types";
@@ -31,3 +30,18 @@ export const logUserOnlineStatus = async (discordID) => {
     throw new Error(error.message);
   }
 };
+
+export async function getListings({ region, server, itemID = null }) {
+  const { data, error } = await supabaseAdmin.rpc("get_listings", {
+    region,
+    server,
+    itemid: itemID,
+  });
+
+  if (error) {
+    console.error("Error fetching listings:", error);
+    return null;
+  }
+
+  return data;
+}
