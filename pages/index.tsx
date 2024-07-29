@@ -3,6 +3,7 @@ import axios from "axios";
 import SEO from "@components/SEO";
 import { LINKS } from "@constants/constants";
 import { ClipLoader } from "react-spinners";
+import ListingCard from "@components/ListingCard";
 
 export default function Home(props) {
   const [query, setQuery] = useState("");
@@ -11,7 +12,8 @@ export default function Home(props) {
   const [showModal, setShowModal] = useState(false);
   const [fetchingItems, setFetchingItems] = useState(false);
   const [fetchingListings, setFetchingListings] = useState(false);
-  const [message, setMessage] = useState("Items will appear here.");
+  const [itemSearchMessage, setItemSearchMessage] = useState("Items will appear here.");
+  const [listingSearchMessage, setListingSearchMessage] = useState("");
   const [modalActive, setModalActive] = useState(true); // Control modal visibility after selection
   const [selectedItem, setSelectedItem] = useState(null);
   const [mode, setMode] = useState("PVE");
@@ -26,7 +28,7 @@ export default function Home(props) {
     if (!query) {
       setItemSearchResults([]);
       setShowModal(false);
-      setMessage("Items will appear here.");
+      setItemSearchMessage("Items will appear here.");
     } else {
       const handler = setTimeout(() => {
         fetchItems(query);
@@ -50,10 +52,10 @@ export default function Home(props) {
       if (modalActive) {
         setShowModal(true);
       }
-      setMessage(response.data.length > 0 ? "" : "No results found.");
+      setItemSearchMessage(response.data.length > 0 ? "" : "No results found.");
     } catch (error) {
       console.error("Error fetching search results:", error);
-      setMessage("Error fetching search results.");
+      setItemSearchMessage("Error fetching search results.");
     } finally {
       setFetchingItems(false);
     }
@@ -78,7 +80,7 @@ export default function Home(props) {
     }
 
     if (specificServer && (twoDigitNumber.length !== 2 || fiveDigitNumber.length !== 5)) {
-      setMessage("Server information was not properly filled out.");
+      setListingSearchMessage("Server information was not properly filled out.");
       setListingResults([]);
       return;
     }
@@ -96,10 +98,10 @@ export default function Home(props) {
         },
       });
       setListingResults(response.data);
-      setMessage(response.data.length > 0 ? "" : "No open listings found.");
+      setListingSearchMessage(response.data.length > 0 ? "" : "No open listings found.");
     } catch (error) {
       console.error("Error fetching listings:", error);
-      setMessage("Error fetching listings.");
+      setListingSearchMessage("Error fetching listings.");
     } finally {
       setFetchingListings(false);
     }
@@ -178,7 +180,7 @@ export default function Home(props) {
                 </div>
               ))
             ) : (
-              <div className="p-2 text-center text-neutral-400">{message}</div>
+              <div className="p-2 text-center text-neutral-400">{itemSearchMessage}</div>
             )}
           </div>
         )}
@@ -240,11 +242,13 @@ export default function Home(props) {
       {fetchingListings ? (
         <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
       ) : (
-        <div className="mt-4 text-neutral-300">
-          {listingResults.length > 0? (
-            JSON.stringify(listingResults)
+        <div className="mt-8 text-neutral-300">
+          {listingResults.length > 0 ? (
+            listingResults.map((entry) => {
+              return <ListingCard entry={entry}/>
+            })
           ) : (
-            <p>{message}</p>
+            <p>{listingSearchMessage}</p>
           )}
         </div>
       )}
