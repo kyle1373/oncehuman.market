@@ -2,6 +2,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { MdOutlineLogin } from "react-icons/md";
+import Router from "next/router";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
 const TopbarWrapper = ({ children }) => {
   const { data: session } = useSession();
@@ -16,6 +19,12 @@ const TopbarWrapper = ({ children }) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
     }
+  };
+
+  const handleSignOut = async () => {
+    NProgress.start();
+    await signOut();
+    NProgress.done();
   };
 
   useEffect(() => {
@@ -54,7 +63,7 @@ const TopbarWrapper = ({ children }) => {
                   </li>
                   <li>
                     <button
-                      onClick={() => signOut()}
+                      onClick={handleSignOut}
                       className="block w-full text-left px-4 py-2 text-white hover:bg-neutral-500"
                     >
                       Sign Out
@@ -66,7 +75,7 @@ const TopbarWrapper = ({ children }) => {
           </div>
         ) : (
           <button onClick={() => signIn("discord")}>
-            <MdOutlineLogin size={35} />
+            <MdOutlineLogin className="text-neutral-300" size={35} />
           </button>
         )}
       </div>
