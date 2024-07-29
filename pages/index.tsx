@@ -140,7 +140,7 @@ export default function Home(props) {
           }}
           onFocus={() => setShowModal(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Type here..."
+          placeholder="Explore items..."
           className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
         />
         <button
