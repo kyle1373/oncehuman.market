@@ -5,8 +5,8 @@ import { getListings } from '@utils/server';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { item_id, region, server } = req.query;
 
-  if (!region || !server) {
-    return res.status(400).json({ error: 'Region and server are required' });
+  if (!region) {
+    return res.status(400).json({ error: 'Region is required' });
   }
 
   const listings = await getListings({ region, server, itemID: item_id });

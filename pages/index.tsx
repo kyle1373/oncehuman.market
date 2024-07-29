@@ -6,22 +6,30 @@ import { ClipLoader } from "react-spinners";
 
 export default function Home(props) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [itemSearchResults, setItemSearchResults] = useState([]);
+  const [listingResults, setListingResults] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("Type something to search.");
+  const [fetchingItems, setFetchingItems] = useState(false);
+  const [fetchingListings, setFetchingListings] = useState(false);
+  const [message, setMessage] = useState("Items will appear here.");
   const [modalActive, setModalActive] = useState(true); // Control modal visibility after selection
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [mode, setMode] = useState("PVE");
+  const [twoDigitNumber, setTwoDigitNumber] = useState("");
+  const [fiveDigitNumber, setFiveDigitNumber] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("NA");
+  const [specificServer, setSpecificServer] = useState(false); // Control the checkbox state
   const inputRef = useRef(null);
   const timeoutRef = useRef(null); // To store the timeout ID
-  const [selectedItem, setSelectedItem] = useState(null)
 
   useEffect(() => {
     if (!query) {
-      setResults([]);
-      setMessage("Type something to search.");
+      setItemSearchResults([]);
+      setShowModal(false);
+      setMessage("Items will appear here.");
     } else {
       const handler = setTimeout(() => {
-        fetchResults(query);
+        fetchItems(query);
       }, 500);
 
       timeoutRef.current = handler;
@@ -32,13 +40,13 @@ export default function Home(props) {
     }
   }, [query]);
 
-  const fetchResults = async (search) => {
-    setLoading(true);
+  const fetchItems = async (search) => {
+    setFetchingItems(true);
     try {
       const response = await axios.get(`/api/search_items`, {
         params: { search },
       });
-      setResults(response.data);
+      setItemSearchResults(response.data);
       if (modalActive) {
         setShowModal(true);
       }
@@ -47,7 +55,7 @@ export default function Home(props) {
       console.error("Error fetching search results:", error);
       setMessage("Error fetching search results.");
     } finally {
-      setLoading(false);
+      setFetchingItems(false);
     }
   };
 
@@ -64,26 +72,56 @@ export default function Home(props) {
     };
   }, []);
 
-  const searchListings = (item) => {
+  const searchListings = async () => {
+    if (fetchingListings) {
+      return;
+    }
+    setFetchingListings(true);
+    setListingResults([]);
+    const combinedSearch = `${mode}${twoDigitNumber.padStart(
+      2,
+      "0"
+    )}-${fiveDigitNumber.padStart(5, "0")}`;
+
+    try {
+      const response = await axios.get(`/api/search_listings`, {
+        params: {
+          server: specificServer ? combinedSearch : null,
+          item_id: selectedItem ? selectedItem.id : null,
+          region: "NA",
+        },
+      });
+      setListingResults(response.data);
+    } catch (error) {
+    } finally {
+      setFetchingListings(false);
+    }
+  };
+
+  const searchItem = (item) => {
     setSelectedItem(item);
     setQuery(item.name);
     setModalActive(false); // Prevent the modal from showing again
     setShowModal(false); // Close the modal when an item is selected
     console.log("Selected " + JSON.stringify(item));
-  }
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       clearTimeout(timeoutRef.current); // Clear any existing timeout
       setModalActive(true); // Allow the modal to show if Enter is pressed
-      fetchResults(query);
+      fetchItems(query);
     }
   };
+
+  useEffect(() => {
+    searchListings();
+  }, [selectedItem]);
 
   return (
     <main className="flex flex-col items-center h-screen relative">
       <SEO />
-      <div ref={inputRef} className="relative mt-8 w-full max-w-lg px-8">
+      <div ref={inputRef} className="relative mt-8 w-full max-w-lg px-8 flex">
         <input
           type="text"
           value={query}
@@ -93,45 +131,107 @@ export default function Home(props) {
           }}
           onFocus={() => setShowModal(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search items..."
+          placeholder="Type here..."
           className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
         />
+        <button
+          onClick={() => searchListings()}
+          className="ml-2 p-2 bg-blue-500 text-white rounded"
+        >
+          Search
+        </button>
         {showModal && (
-          <div className="absolute top-full left-8 right-8 mt-2 bg-black border border-neutral-600 rounded shadow-lg z-50 text-neutral-200 max-h-[400px] overflow-y-auto">
-            {loading ? (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-black border border-neutral-600 rounded shadow-lg z-50 text-neutral-200 max-h-[300px] overflow-y-auto">
+            {fetchingItems ? (
               <div className="flex justify-center items-center p-4">
-                <ClipLoader color={"#ffffff"} loading={loading} />
+                <ClipLoader color={"#ffffff"} loading={fetchingItems} />
               </div>
-            ) : (
-              results.length > 0 ? (
-                results.map((category) => (
-                  <div key={category.id} className="p-2">
-                    <h3 className="font-bold">{category.name}</h3>
-                    {category.items.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className={`flex items-center p-2 ${index !== category.items.length - 1 && "border-b"} border-neutral-700 cursor-pointer hover:bg-neutral-800 ${item.id === selectedItem?.id ? "bg-neutral-800" : ""}`}
-                        onClick={() => searchListings(item)}
-                      >
-                        <img
-                          src={LINKS.baseImagePath + item.s3_image_path}
-                          alt={item.name}
-                          className="w-10 h-10 mr-4 rounded"
-                        />
-                        <span>{item.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                ))
-              ) : (
-                <div className="p-2 text-center text-neutral-400">
-                  {message}
+            ) : itemSearchResults.length > 0 ? (
+              itemSearchResults.map((category) => (
+                <div key={category.id} className="p-2">
+                  <h3 className="font-bold">{category.name}</h3>
+                  {category.items.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className={`flex items-center p-2 ${
+                        index !== category.items.length - 1 && "border-b"
+                      } border-neutral-700 cursor-pointer hover:bg-neutral-800 ${
+                        item.id === selectedItem?.id ? "bg-neutral-800" : ""
+                      }`}
+                      onClick={() => searchItem(item)}
+                    >
+                      <img
+                        src={LINKS.baseImagePath + item.s3_image_path}
+                        alt={item.name}
+                        className="w-10 h-10 mr-4 rounded"
+                      />
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
                 </div>
-              )
+              ))
+            ) : (
+              <div className="p-2 text-center text-neutral-400">{message}</div>
             )}
           </div>
         )}
       </div>
+      <label className=" text-neutral-300 mt-4 mb-2">
+        <input
+          type="checkbox"
+          checked={specificServer}
+          onChange={() => setSpecificServer(!specificServer)}
+          className="mr-1"
+        />
+        Search specific server
+      </label>
+      <div className="flex items-center ">
+        <select
+          value={selectedRegion}
+          onChange={(e) => setSelectedRegion(e.target.value)}
+          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
+          }`}
+        >
+          <option value="NA">🇺🇸 NA</option>
+        </select>
+        <select
+          value={mode}
+          onChange={(e) => setMode(e.target.value)}
+          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
+          }`}
+          disabled={!specificServer}
+        >
+          <option value="PVE">PVE</option>
+          <option value="PVP">PVP</option>
+        </select>
+        <input
+          type="text"
+          value={twoDigitNumber}
+          onChange={(e) => setTwoDigitNumber(e.target.value)}
+          maxLength={2}
+          placeholder="01"
+          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
+            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
+          }`}
+          disabled={!specificServer}
+        />
+        <input
+          type="text"
+          value={fiveDigitNumber}
+          onChange={(e) => setFiveDigitNumber(e.target.value)}
+          maxLength={5}
+          placeholder="00001"
+          className={`p-2 border border-neutral-600 bg-neutral-700 rounded w-[70px] ${
+            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
+          }`}
+          disabled={!specificServer}
+        />
+      </div>
+      {fetchingListings && <ClipLoader color="#FFFFFF" className="mt-8" size={30} />}
+
+      {JSON.stringify(listingResults)}
     </main>
   );
 }
