@@ -76,12 +76,16 @@ export default function Home(props) {
     if (fetchingListings) {
       return;
     }
+
+    if (specificServer && (twoDigitNumber.length !== 2 || fiveDigitNumber.length !== 5)) {
+      setMessage("Server information was not properly filled out.");
+      setListingResults([]);
+      return;
+    }
+
     setFetchingListings(true);
     setListingResults([]);
-    const combinedSearch = `${mode}${twoDigitNumber.padStart(
-      2,
-      "0"
-    )}-${fiveDigitNumber.padStart(5, "0")}`;
+    const combinedSearch = `${mode}${twoDigitNumber.padStart(2, '0')}-${fiveDigitNumber.padStart(5, '0')}`;
 
     try {
       const response = await axios.get(`/api/search_listings`, {
@@ -92,7 +96,10 @@ export default function Home(props) {
         },
       });
       setListingResults(response.data);
+      setMessage(response.data.length > 0 ? "" : "No open listings found.");
     } catch (error) {
+      console.error("Error fetching listings:", error);
+      setMessage("Error fetching listings.");
     } finally {
       setFetchingListings(false);
     }
@@ -176,7 +183,7 @@ export default function Home(props) {
           </div>
         )}
       </div>
-      <label className=" text-neutral-300 mt-4 mb-2">
+      <label className="text-neutral-300 mt-4 mb-2">
         <input
           type="checkbox"
           checked={specificServer}
@@ -185,13 +192,14 @@ export default function Home(props) {
         />
         Search specific server
       </label>
-      <div className="flex items-center ">
+      <div className="flex items-center">
         <select
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
           className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
             !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
           }`}
+          disabled={!specificServer}
         >
           <option value="NA">🇺🇸 NA</option>
         </select>
@@ -229,9 +237,17 @@ export default function Home(props) {
           disabled={!specificServer}
         />
       </div>
-      {fetchingListings && <ClipLoader color="#FFFFFF" className="mt-8" size={30} />}
-
-      {JSON.stringify(listingResults)}
+      {fetchingListings ? (
+        <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
+      ) : (
+        <div className="mt-4 text-neutral-300">
+          {listingResults.length > 0? (
+            JSON.stringify(listingResults)
+          ) : (
+            <p>{message}</p>
+          )}
+        </div>
+      )}
     </main>
   );
 }
