@@ -11,7 +11,7 @@
 body {
   color: rgb(var(--foreground-rgb));
   position: relative;
-  overflow: hidden;
+  overflow-y: auto; /* Change this line */
   min-height: 100vh;
   min-width: 100vw;
   background-color: black; /* Ensure background is always black */

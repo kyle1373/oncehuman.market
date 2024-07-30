@@ -81,7 +81,9 @@ const TopbarWrapper = ({ children }) => {
         )}
       </div>
 
-      <div className="mt-14 w-full relative overflow-x-auto">{children}</div>
+      <div className="mt-14 w-full relative overflow-x-auto overflow-y-auto">
+        {children}
+      </div>
     </div>
   );
 };
