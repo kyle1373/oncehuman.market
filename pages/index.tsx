@@ -92,99 +92,107 @@ export default function Home(props) {
   }, [selectedLookingForItem, selectedOfferingItem]);
 
   return (
-    <main className="flex flex-col items-center min-h-screen relative overflow-y-auto">
-      <SEO />
-      <div className="w-full max-w-lg px-4">
-        <h1 className="mt-8 mb-1 text-neutral-300 text-lg">
-          I am looking for...
-        </h1>
-        <ItemSearchDropdown
-          query={lookingForItemQuery}
-          setQuery={setLookingForItemQuery}
-          onItemSelect={handleLookingForItemSelect}
-        />
-      </div>
-      <div className="w-full max-w-lg px-4">
-        <h1 className="mt-6 mb-1 text-neutral-300 text-lg">I am offering...</h1>
-        <ItemSearchDropdown
-          query={offeringItemQuery}
-          setQuery={setOfferingItemQuery}
-          onItemSelect={handleOfferingItemSelect}
-        />
-      </div>
-      <label className="text-neutral-300 mt-4 mb-2">
-        <input
-          type="checkbox"
-          checked={specificServer}
-          onChange={() => setSpecificServer(!specificServer)}
-          className="mr-1"
-        />
-        Search specific server
-      </label>
-      <div className="flex items-center">
-        <select
-          value={selectedRegion}
-          onChange={(e) => setSelectedRegion(e.target.value)}
-          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
-            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
-          }`}
-          disabled={!specificServer}
-        >
-          <option value="NA">🇺🇸 NA</option>
-        </select>
-        <select
-          value={mode}
-          onChange={(e) => setMode(e.target.value)}
-          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
-            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
-          }`}
-          disabled={!specificServer}
-        >
-          <option value="PVE">PVE</option>
-          <option value="PVP">PVP</option>
-        </select>
-        <input
-          type="text"
-          value={twoDigitNumber}
-          onChange={(e) => setTwoDigitNumber(e.target.value)}
-          maxLength={2}
-          placeholder="01"
-          className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
-            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
-          }`}
-          disabled={!specificServer}
-        />
-        <input
-          type="text"
-          value={fiveDigitNumber}
-          onChange={(e) => setFiveDigitNumber(e.target.value)}
-          maxLength={5}
-          placeholder="00001"
-          className={`p-2 border border-neutral-600 bg-neutral-700 rounded w-[70px] ${
-            !specificServer && "opacity-80 text-neutral-500 cursor-not-allowed"
-          }`}
-          disabled={!specificServer}
-        />
-      </div>
-      <button
-        onClick={() => searchListings()}
-        className="py-2 px-7 bg-blue-500 text-white rounded mt-4"
-      >
-        Search
-      </button>
-      {fetchingListings ? (
-        <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
-      ) : (
-        <div className="mt-8 text-neutral-300">
-          {listingResults.length > 0 ? (
-            listingResults.map((entry, index) => {
-              return <ListingCard key={index} entry={entry} />;
-            })
-          ) : (
-            <p>{listingSearchMessage}</p>
-          )}
+    <main className="h-full w-full overflow-y-auto">
+      <div className="flex flex-col items-center">
+        <SEO />
+        <div className="w-full max-w-lg px-4">
+          <h1 className="mt-8 mb-1 text-neutral-300 text-lg">
+            I am looking for...
+          </h1>
+          <ItemSearchDropdown
+            query={lookingForItemQuery}
+            setQuery={setLookingForItemQuery}
+            onItemSelect={handleLookingForItemSelect}
+          />
         </div>
-      )}
+        <div className="w-full max-w-lg px-4">
+          <h1 className="mt-6 mb-1 text-neutral-300 text-lg">
+            I am offering...
+          </h1>
+          <ItemSearchDropdown
+            query={offeringItemQuery}
+            setQuery={setOfferingItemQuery}
+            onItemSelect={handleOfferingItemSelect}
+          />
+        </div>
+        <label className="text-neutral-300 mt-4 mb-2">
+          <input
+            type="checkbox"
+            checked={specificServer}
+            onChange={() => setSpecificServer(!specificServer)}
+            className="mr-1"
+          />
+          Search specific server
+        </label>
+        <div className="flex items-center">
+          <select
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+              !specificServer &&
+              "opacity-80 text-neutral-500 cursor-not-allowed"
+            }`}
+            disabled={!specificServer}
+          >
+            <option value="NA">🇺🇸 NA</option>
+          </select>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+              !specificServer &&
+              "opacity-80 text-neutral-500 cursor-not-allowed"
+            }`}
+            disabled={!specificServer}
+          >
+            <option value="PVE">PVE</option>
+            <option value="PVP">PVP</option>
+          </select>
+          <input
+            type="text"
+            value={twoDigitNumber}
+            onChange={(e) => setTwoDigitNumber(e.target.value)}
+            maxLength={2}
+            placeholder="01"
+            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
+              !specificServer &&
+              "opacity-80 text-neutral-500 cursor-not-allowed"
+            }`}
+            disabled={!specificServer}
+          />
+          <input
+            type="text"
+            value={fiveDigitNumber}
+            onChange={(e) => setFiveDigitNumber(e.target.value)}
+            maxLength={5}
+            placeholder="00001"
+            className={`p-2 border border-neutral-600 bg-neutral-700 rounded w-[70px] ${
+              !specificServer &&
+              "opacity-80 text-neutral-500 cursor-not-allowed"
+            }`}
+            disabled={!specificServer}
+          />
+        </div>
+        <button
+          onClick={() => searchListings()}
+          className="py-2 px-7 bg-blue-500 text-white rounded mt-4"
+        >
+          Search
+        </button>
+        {fetchingListings ? (
+          <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
+        ) : (
+          <div className="mt-8 text-neutral-300">
+            {listingResults.length > 0 ? (
+              listingResults.map((entry, index) => {
+                return <ListingCard key={index} entry={entry} />;
+              })
+            ) : (
+              <p>{listingSearchMessage}</p>
+            )}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
