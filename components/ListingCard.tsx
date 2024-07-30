@@ -98,42 +98,42 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <div className="flex-shrink-0 px-4 py-2 justify-center items-center text-center font-bold">
               <div className="relative border-2 rounded-sm border-sky-950">
                 <img
-                  className=" border-sky-950 w-20 h-20"
+                  className=" border-sky-950 sm:w-20 sm:h-20 h-14 w-14"
                   src={LINKS.baseImagePath + sellingItem.s3_image_path}
                 />
-                <div className="absolute bottom-0 right-0 left-0 px-2 py-1 bg-[#00000085] text-white text-sm">
+                <div className="absolute bottom-0 right-0 left-0 sm:px-2 py-1 bg-[#00000085] text-white text-xs">
                   X {sellingItem.amount}
                 </div>
               </div>
-              <h1 className="text-xs mt-1">
-                {sellingItem.total_stock} in stock
+              <h1 className="sm:text-xs text-[10px] mt-1 break-all">
+                {sellingItem.total_stock} total
               </h1>
             </div>
             <div className="flex-grow pt-1 pr-3">
-              <h1 className="font-bold text-lg">{sellingItem.name}</h1>
-              <h1 className="font-normal text-xs">
+              <h1 className="font-bold sm:text-lg text-sm">{sellingItem.name}</h1>
+              <h1 className="font-normal sm:text-xs text-[10px]">
                 {entry.listing.oncehuman_username}{" "}
                 <DateComponent timestamp={entry.user_info.last_online} />
               </h1>
               <div className="flex flex-col items-start mt-2 mb-1">
                 <div className="flex justify-start">
-                  <IoMdSwap size={30} className="mt-2" />
+                  <IoMdSwap className="mt-2 sm:h-6 sm:w-6 h-4 w-4" />
                   {entry.items_asking.map((item, index) => (
                     <>
                       <div
                         key={index}
-                        className="flex flex-col items-center mx-2"
+                        className="flex flex-col items-center sm:mx-2 mx-1"
                       >
                         <img
-                          className="w-10 h-10 border rounded-sm border-sky-950"
+                          className="sm:w-10 sm:h-10 w-8 h-8 border rounded-sm border-sky-950"
                           src={LINKS.baseImagePath + item.s3_image_path}
                         />
-                        <h1 className="text-center items-center text-xs font-bold">
+                        <h1 className="text-center items-center sm:text-xs text-[10px] font-bold">
                           X {item.amount}
                         </h1>
                       </div>
                       {index < entry.items_asking.length - 1 && (
-                        <h1 className="mt-2">or</h1>
+                        <h1 className="mt-2 sm:text-base text-xs">or</h1>
                       )}
                     </>
                   ))}
@@ -141,11 +141,11 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap justify-between px-4 py-2 border-t border-sky-700 text-sm break-all text-sky-500">
-            <h1>
+          <div className="flex flex-wrap justify-between px-4 py-2 border-t border-sky-700 sm:text-sm text-xs break-all text-sky-500">
+            <h1 className="pr-2">
               World {entry.listing.world}: {entry.listing.location}
             </h1>
-            <h1 className="pl-2">{entry.listing.server}</h1>
+            <h1 className="">{entry.listing.server}</h1>
           </div>
         </div>
       </Link>

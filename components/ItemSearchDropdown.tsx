@@ -1,0 +1,140 @@
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { ClipLoader } from "react-spinners";
+import { LINKS } from "@constants/constants";
+
+const ItemSearchDropdown = ({
+  query,
+  setQuery,
+  onItemSelect,
+  showModal,
+  setShowModal,
+  modalActive,
+  setModalActive,
+  selectedItem,
+}) => {
+  const [itemSearchResults, setItemSearchResults] = useState([]);
+  const [fetchingItems, setFetchingItems] = useState(false);
+  const [itemSearchMessage, setItemSearchMessage] = useState("Items will appear here.");
+  const inputRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    if (!query) {
+      setItemSearchResults([]);
+      setShowModal(false);
+      setItemSearchMessage("Items will appear here.");
+    } else {
+      const handler = setTimeout(() => {
+        fetchItems(query);
+      }, 500);
+
+      timeoutRef.current = handler;
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }
+  }, [query]);
+
+  const fetchItems = async (search) => {
+    setFetchingItems(true);
+    try {
+      const response = await axios.get(`/api/search_items`, {
+        params: { search },
+      });
+      setItemSearchResults(response.data);
+      if (modalActive) {
+        setShowModal(true);
+      }
+      setItemSearchMessage(response.data.length > 0 ? "" : "No results found.");
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      setItemSearchMessage("Error fetching search results.");
+    } finally {
+      setFetchingItems(false);
+    }
+  };
+
+  const handleClickOutside = (event) => {
+    if (inputRef.current && !inputRef.current.contains(event.target)) {
+      setShowModal(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      clearTimeout(timeoutRef.current); // Clear any existing timeout
+      setModalActive(true); // Allow the modal to show if Enter is pressed
+      fetchItems(query);
+    }
+  };
+
+  const handleItemClick = (item) => {
+    onItemSelect(item);
+    setQuery(item.name);
+    setModalActive(false); // Prevent the modal from showing again
+    setShowModal(false); // Close the modal when an item is selected
+  };
+
+  return (
+    <div ref={inputRef} className="relative w-full max-w-lg px-8 flex">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setModalActive(true); // Allow the modal to show if the query changes
+        }}
+        onFocus={() => setShowModal(true)}
+        onKeyDown={handleKeyDown}
+        placeholder="Explore items..."
+        className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
+      />
+      {showModal && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-black border border-neutral-600 rounded shadow-lg z-50 text-neutral-200 max-h-[300px] overflow-y-auto">
+          {fetchingItems ? (
+            <div className="flex justify-center items-center p-4">
+              <ClipLoader color={"#ffffff"} loading={fetchingItems} />
+            </div>
+          ) : itemSearchResults.length > 0 ? (
+            itemSearchResults.map((category, index) => (
+              <div key={category.id + index} className="p-2">
+                <h3 className="font-bold">{category.name}</h3>
+                {category.items.map((item, index) => (
+                  <div
+                    key={item.id + index}
+                    className={`flex items-center p-2 ${
+                      index !== category.items.length - 1 && "border-b"
+                    } border-neutral-700 cursor-pointer hover:bg-neutral-800 ${
+                      item.id === selectedItem?.id ? "bg-neutral-800" : ""
+                    }`}
+                    onClick={() => handleItemClick(item)}
+                  >
+                    <img
+                      src={LINKS.baseImagePath + item.s3_image_path}
+                      alt={item.name}
+                      className="w-10 h-10 mr-4 rounded"
+                    />
+                    <span>{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <div className="p-2 text-center text-neutral-400">{itemSearchMessage}</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ItemSearchDropdown;
