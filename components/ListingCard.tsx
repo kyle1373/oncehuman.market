@@ -94,7 +94,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
   };
 
   const sellingItem =
-    entry.items_selling.length > 0 ? entry.items_selling[0] : null;
+    entry.items_selling?.length > 0 ? entry.items_selling[0] : {} as any;
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
@@ -136,7 +136,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <div className="flex flex-col items-start mt-2 mb-1">
               <div className="flex justify-start">
                 <IoMdSwap className="mt-2 sm:h-6 sm:w-6 h-4 w-4" />
-                {entry.items_asking.map((item, index) => (
+                {entry.items_asking?.map((item, index) => (
                   <>
                     <div
                       key={index}
@@ -162,7 +162,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                         each
                       </h1>
                     </div>
-                    {index < entry.items_asking.length - 1 && (
+                    {index < entry.items_asking?.length - 1 && (
                       <h1 className="mt-2 sm:text-base text-xs">or</h1>
                     )}
                   </>
@@ -180,7 +180,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
       </button>
       <div className="h-4" />
       <Tooltip id={`tooltip-${sellingItem.item_id}`} />
-      {entry.items_asking.map((item) => (
+      {entry.items_asking?.map((item) => (
         <Tooltip key={item.item_id} id={`tooltip-${item.item_id}`} />
       ))}
 
@@ -207,7 +207,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           </div>
           <div>
             <h3 className="text-lg font-semibold">Items Asking</h3>
-            {entry.items_asking.map((item, index) => (
+            {entry.items_asking?.map((item, index) => (
               <div key={index}>
                 <p>{item.name}</p>
                 <p>Amount: {item.amount}</p>
