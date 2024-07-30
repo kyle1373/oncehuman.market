@@ -151,8 +151,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                         <h1 className="sm:text-xs text-[10px] mt-1 break-words text-center">
                           {item.amount / sellingItem.amount}
                         </h1>
-                        <h1 className="text-[8px] break-words text-center">
-                          per amount
+                        <h1 className="text-[10px] break-words text-center">
+                          each
                         </h1>
                       </div>
                       {index < entry.items_asking.length - 1 && (
