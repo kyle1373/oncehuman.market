@@ -1,21 +1,30 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, SetStateAction, Dispatch } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { LINKS } from "@constants/constants";
 
+type ItemSearchDropdownProps = {
+  query: string;
+  setQuery: Dispatch<SetStateAction<string>>;
+  onItemSelect: (item: any) => void;
+  placeHolder?: string;
+  className?: string;
+};
 const ItemSearchDropdown = ({
   query,
   setQuery,
   onItemSelect,
-  showModal,
-  setShowModal,
-  modalActive,
-  setModalActive,
-  selectedItem,
-}) => {
+  className = "",
+  placeHolder = "Search items...",
+}: ItemSearchDropdownProps) => {
   const [itemSearchResults, setItemSearchResults] = useState([]);
   const [fetchingItems, setFetchingItems] = useState(false);
-  const [itemSearchMessage, setItemSearchMessage] = useState("Items will appear here.");
+  const [itemSearchMessage, setItemSearchMessage] = useState(
+    "Items will appear here."
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [modalActive, setModalActive] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<any>();
   const inputRef = useRef(null);
   const timeoutRef = useRef(null);
 
@@ -24,6 +33,8 @@ const ItemSearchDropdown = ({
       setItemSearchResults([]);
       setShowModal(false);
       setItemSearchMessage("Items will appear here.");
+      setSelectedItem(null)
+      onItemSelect(null)
     } else {
       const handler = setTimeout(() => {
         fetchItems(query);
@@ -80,12 +91,16 @@ const ItemSearchDropdown = ({
   const handleItemClick = (item) => {
     onItemSelect(item);
     setQuery(item.name);
+    setSelectedItem(item);
     setModalActive(false); // Prevent the modal from showing again
     setShowModal(false); // Close the modal when an item is selected
   };
 
   return (
-    <div ref={inputRef} className="relative w-full max-w-lg px-8 flex">
+    <div
+      ref={inputRef}
+      className={`relative w-full max-w-lg flex ${className}`}
+    >
       <input
         type="text"
         value={query}
@@ -95,7 +110,7 @@ const ItemSearchDropdown = ({
         }}
         onFocus={() => setShowModal(true)}
         onKeyDown={handleKeyDown}
-        placeholder="Explore items..."
+        placeholder={placeHolder}
         className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
       />
       {showModal && (
@@ -129,7 +144,9 @@ const ItemSearchDropdown = ({
               </div>
             ))
           ) : (
-            <div className="p-2 text-center text-neutral-400">{itemSearchMessage}</div>
+            <div className="p-2 text-center text-neutral-400">
+              {itemSearchMessage}
+            </div>
           )}
         </div>
       )}

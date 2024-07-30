@@ -31,11 +31,23 @@ export const logUserOnlineStatus = async (discordID) => {
   }
 };
 
-export async function getListings({ region, server, itemID = null }) {
+export async function getListings({
+  region,
+  server,
+  sellingItemID = null,
+  askingItemID = null,
+  filterOldListings = true,
+  sortByRatio = true,
+}) {
   const { data, error } = await supabaseAdmin.rpc("get_listings", {
-    region,
-    server,
-    itemid: itemID,
+    p_asking_item_id: askingItemID,
+    p_filter_old_listings: filterOldListings,
+    p_region: region,
+
+    p_selling_item_id: sellingItemID,
+    p_server: server,
+
+    p_sort_by_ratio: sortByRatio,
   });
 
   if (error) {
