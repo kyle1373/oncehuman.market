@@ -92,7 +92,7 @@ export default function Home(props) {
   }, [selectedLookingForItem, selectedOfferingItem]);
 
   return (
-    <main className="flex flex-col items-center h-screen relative">
+    <main className="flex flex-col items-center min-h-screen relative overflow-y-auto">
       <SEO />
       <div className="w-full max-w-lg px-4">
         <h1 className="mt-8 mb-1 text-neutral-300 text-lg">
