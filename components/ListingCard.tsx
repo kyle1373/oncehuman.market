@@ -61,12 +61,12 @@ type ListingCardProps = {
   className?: any;
 };
 
-Modal.setAppElement('#__next'); // Required for accessibility
+Modal.setAppElement("#__next"); // Required for accessibility
 
 const ListingCard = ({ entry }: ListingCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const DateComponent = ({ timestamp }) => {
+  const LastOnlineDateComponent = ({ timestamp }) => {
     const [formattedDate, setFormattedDate] = useState("");
 
     useEffect(() => {
@@ -93,8 +93,50 @@ const ListingCard = ({ entry }: ListingCardProps) => {
     return <span className="italic">({formattedDate})</span>;
   };
 
+  function formatPostDate(dateString) {
+    // Create a Date object from the input datetime string
+    const date = new Date(dateString);
+
+    // Define arrays for month names
+    const months = [
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Extract day, month, year, hours, and minutes from the Date object
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Determine the AM/PM suffix
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    // Helper function to determine the ordinal suffix for the day
+    function getOrdinalSuffix(day) {
+        if (day > 3 && day < 21) return 'th';
+        switch (day % 10) {
+            case 1: return 'st';
+            case 2: return 'nd';
+            case 3: return 'rd';
+            default: return 'th';
+        }
+    }
+
+    // Format minutes to always be two digits
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    // Format the date string
+    const formattedDate = `${month} ${day}${getOrdinalSuffix(day)}, ${year} at ${hours}:${formattedMinutes}${ampm}`;
+
+    return formattedDate;
+}
+
   const sellingItem =
-    entry.items_selling?.length > 0 ? entry.items_selling[0] : {} as any;
+    entry.items_selling?.length > 0 ? entry.items_selling[0] : ({} as any);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
@@ -131,7 +173,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <h1 className="font-bold sm:text-lg text-sm">{sellingItem.name}</h1>
             <h1 className="font-normal sm:text-xs text-[10px]">
               {entry.listing.oncehuman_username}{" "}
-              <DateComponent timestamp={entry.user_info.last_online} />
+              <LastOnlineDateComponent
+                timestamp={entry.user_info.last_online}
+              />
             </h1>
             <div className="flex flex-col items-start mt-2 mb-1">
               <div className="flex justify-start">
@@ -171,12 +215,13 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap justify-between px-4 py-2 border-t border-sky-700 sm:text-sm text-xs break-all text-sky-500">
+        <div className="flex flex-wrap justify-between px-4 pt-2 border-t border-sky-700 sm:text-sm text-xs break-all text-sky-500">
           <h1 className="pr-4">
             World {entry.listing.world}: {entry.listing.location}
           </h1>
           <h1 className="">{entry.listing.server}</h1>
         </div>
+        <h1 className="italic text-xs text-sky-800 text-right px-4 pb-2">Posted {formatPostDate(entry.listing.created_at)}</h1>
       </button>
       <div className="h-4" />
       <Tooltip id={`tooltip-${sellingItem.item_id}`} />
@@ -203,7 +248,12 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <h3 className="text-lg font-semibold">User Info</h3>
             <p>Username: {entry.listing.oncehuman_username}</p>
             <p>Discord: {entry.user_info.discord_name}</p>
-            <p>Last Online: <DateComponent timestamp={entry.user_info.last_online} /></p>
+            <p>
+              Last Online:{" "}
+              <LastOnlineDateComponent
+                timestamp={entry.user_info.last_online}
+              />
+            </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold">Items Asking</h3>
@@ -222,7 +272,10 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <p>Location: {entry.listing.location}</p>
           </div>
         </div>
-        <button onClick={closeModal} className="mt-4 bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded">
+        <button
+          onClick={closeModal}
+          className="mt-4 bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
+        >
           Close
         </button>
       </Modal>
