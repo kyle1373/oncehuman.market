@@ -44,7 +44,6 @@ export function logServerStats(req: NextApiRequest, res: NextApiResponse) {
       responseBody: responseBody,
     };
 
-    // Be cautious with logging request bodies, as they may contain sensitive information
     if (req.body && ["POST", "PUT", "PATCH"].includes(req.method)) {
       (logData as any).requestBody = req.body;
     }

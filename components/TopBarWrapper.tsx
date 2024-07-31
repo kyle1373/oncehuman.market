@@ -53,6 +53,8 @@ const TopbarWrapper = ({ children }) => {
           <Link
             href={LINKS.discord}
             className="hover:underline mr-5 text-neutral-400 hover:text-neutral-200"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaDiscord className="h-7 w-7" />
           </Link>
