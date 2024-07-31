@@ -154,7 +154,7 @@ export default function Home(props) {
   ]);
 
   return (
-    <main className="h-screen w-full overflow-y-auto">
+    <main className="h-full w-full overflow-y-auto">
       <div className="flex flex-col items-center relative mb-20">
         <SEO />
         <div className="w-full max-w-lg px-4">

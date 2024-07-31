@@ -82,7 +82,7 @@ export default function Profile({ user, error }) {
   }
 
   return (
-    <main className="h-screen w-full overflow-y-auto">
+    <main className="h-full w-full overflow-y-auto">
       <SEO title={`${user.discord_name}'s Profile`} />
       <div className="flex flex-col items-center relative mt-10 px-4">
         <div className="max-w-2xl w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 flex items-center">
