@@ -18,7 +18,6 @@ const browserSlice = createSlice({
 export const { clickBrowserButtons, notClickBrowserButtons } =
   browserSlice.actions;
 
-
 const cacheSlice = createSlice({
   name: "cache",
   initialState: {},
@@ -34,10 +33,13 @@ const cacheSlice = createSlice({
       const { path } = action.payload;
       state[path] = {};
     },
+    deleteEntireCache: (state) => {
+      return {}; // Reset the entire cache state to an empty object
+    },
   },
 });
 
-export const { cachePage, clearCache } = cacheSlice.actions;
+export const { cachePage, clearCache, deleteEntireCache } = cacheSlice.actions;
 
 const store = configureStore({
   reducer: {

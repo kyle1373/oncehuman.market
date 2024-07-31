@@ -4,7 +4,8 @@ import {
   clearCache,
   clickBrowserButtons,
   notClickBrowserButtons,
-} from "../redux/store";
+  deleteEntireCache,
+} from "../redux/store"; // Import deleteEntireCache action
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
@@ -37,7 +38,11 @@ export function usePageCache() {
     dispatch(cachePage({ path, key, data }));
   }
 
-  return { pageCache, cachePageData };
+  function deleteEntireCacheData() {
+    dispatch(deleteEntireCache());
+  }
+
+  return { pageCache, cachePageData, deleteEntireCacheData };
 }
 
 export function activatePageCache() {
