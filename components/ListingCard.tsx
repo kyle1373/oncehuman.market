@@ -317,15 +317,15 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         <div className="p-4">
           <div className="space-y-2">
             <div>
-              <h3 className="text-xl font-semibold underline">Selling Item</h3>
+              <h3 className="text-xl font-semibold underline">Selling Items</h3>
               <p>
                 {sellingItem.name} ({sellingItem.amount})
               </p>
-              <p>Total Stock: {sellingItem.total_stock}</p>
+              <p>Available Stock: {sellingItem.total_stock}</p>
             </div>
             <div>
               <h3 className="text-xl font-semibold underline">
-                Items Asking (pick one)
+                Asking Items (pick one)
               </h3>
               {entry.items_asking?.map((item, index) => (
                 <div key={index}>
