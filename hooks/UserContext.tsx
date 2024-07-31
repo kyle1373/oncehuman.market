@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { useSession } from "next-auth/react";
 import { ClipLoader } from "react-spinners";
 import { AnimatePresence } from "framer-motion";
@@ -7,7 +13,7 @@ import styled from "@emotion/styled";
 
 // Define the shape of the context data
 interface UserContextProps {
-  discordId: number | null;
+  discordId: string | null;
   discordUsername: string | null;
   discordEmail: string | null;
   discordImage: string | null;
@@ -46,7 +52,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const [loading, showLoading] = useState<boolean>(false);
 
-  const discordId = parseInt((session?.user as any)?.id) ?? null;
+  const discordId = (session?.user as any)?.id ?? null;
   const discordUsername = session?.user?.name ?? null;
   const discordEmail = session?.user?.email ?? null;
   const discordImage = session?.user?.image ?? null;

@@ -82,6 +82,7 @@ export default function Home(props) {
             : null,
           asking_item_id: selectedOfferingItem ? selectedOfferingItem.id : null,
           region: "NA",
+          filter_old_listings: removeOldListings ? "true" : "false",
         },
       });
       setListingResults(response.data);

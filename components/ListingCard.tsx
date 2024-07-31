@@ -9,6 +9,8 @@ import getOnlineStatus from "@utils/helpers";
 import Link from "next/link";
 import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 import { useUser } from "@hooks/UserContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 type Listing = {
   id: number;
@@ -26,7 +28,7 @@ type Listing = {
 type UserInfo = {
   id: number;
   created_at: string;
-  discord_id: number;
+  discord_id: string;
   last_online: string;
   discord_name: string;
   discord_image: string;
@@ -70,9 +72,11 @@ Modal.setAppElement("#__next"); // Required for accessibility
 const ListingCard = ({ entry }: ListingCardProps) => {
   const { discordId, showLoading } = useUser(); // Destructure user data
 
-
   const { pageCache, cachePageData } = usePageCache();
-  const [listingClosed, setListingClosed] = useState(pageCache(`/listing/${entry.listing.id}`, "listingClosed") ?? entry.listing.is_closed);
+  const [listingClosed, setListingClosed] = useState(
+    pageCache(`/listing/${entry.listing.id}`, "listingClosed") ??
+      entry.listing.is_closed
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(
     pageCache(`/listing/${entry.listing.id}`, "isOpen") ?? false
@@ -80,8 +84,11 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
   useEffect(() => {
     cachePageData(`/listing/${entry.listing.id}`, "isOpen", isModalOpen);
-    cachePageData(`/listing/${entry.listing.id}`, "listingClosed", listingClosed);
-
+    cachePageData(
+      `/listing/${entry.listing.id}`,
+      "listingClosed",
+      listingClosed
+    );
   }, [isModalOpen, listingClosed]);
 
   const LastOnlineDateComponent = ({ timestamp }) => {
@@ -101,9 +108,27 @@ const ListingCard = ({ entry }: ListingCardProps) => {
     return <span className="italic">({formattedDate})</span>;
   };
 
-  function toggleListingVisibility() {
-    // Do some loading here
-    setListingClosed((prevState) => !prevState);
+  async function toggleListingVisibility() {
+    showLoading(true);
+    try {
+      const response = await axios.get(`/api/toggle_listing_status`, {
+        params: {
+          is_closed: listingClosed ? "false" : "true",
+          listing_id: entry.listing.id,
+        },
+      });
+      setListingClosed((prevState) => !prevState);
+      if(listingClosed) {
+        toast("Opened your listing back up to the public!");
+      } else {
+        toast("Closed your listing from the public!");
+      }
+    } catch (error) {
+      console.error("Error updating listing status:", error?.response?.data);
+      toast("Failed to update your listing status: ");
+    } finally {
+      showLoading(false);
+    }
   }
 
   function formatPostDate(dateString) {
@@ -256,7 +281,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         </div>
         <div
           className={`flex flex-wrap justify-between px-4 pt-2 border-t ${
-            listingClosed ? "border-rose-700 text-rose-500" : "border-sky-700 text-sky-500"
+            listingClosed
+              ? "border-rose-700 text-rose-500"
+              : "border-sky-700 text-sky-500"
           } sm:text-sm text-xs break-all`}
         >
           <h1 className="pr-4">
@@ -343,7 +370,16 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <div>
               <h3 className="text-xl font-semibold underline">Listing Info</h3>
               <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
-              <p>Status: <span className={`font-bold ${listingClosed ? " text-red-500" : "text-green-500"}`}>{listingClosed ? "Closed" : "Open"}</span></p>
+              <p>
+                Status:{" "}
+                <span
+                  className={`font-bold ${
+                    listingClosed ? " text-red-500" : "text-green-500"
+                  }`}
+                >
+                  {listingClosed ? "Closed" : "Open"}
+                </span>
+              </p>
               <p>Region: {entry.listing.region}</p>
               <p>Server: {entry.listing.server}</p>
               <p>World: {entry.listing.world}</p>

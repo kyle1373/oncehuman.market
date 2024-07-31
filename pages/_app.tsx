@@ -12,6 +12,8 @@ import { Provider } from "react-redux";
 import store from "@redux/store";
 import { activatePageCache } from "@hooks/usePageCache";
 import { UserProvider } from "@hooks/UserContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 NProgress.configure({ showSpinner: false });
 
@@ -56,6 +58,19 @@ function MyApp({ Component, pageProps }: AppProps) {
         <TopbarWrapper>
           <Component {...pageProps} />
         </TopbarWrapper>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+
       </UserProvider>
     </SessionProvider>
   );
