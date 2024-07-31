@@ -213,7 +213,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
             <h1 className="font-normal sm:text-xs text-[10px]">
               {entry.listing.oncehuman_username}{" "}
               <span className="italic">
-                {getOnlineStatus(entry.user_info.last_online)}
+                ({getOnlineStatus(entry.user_info.last_online)})
               </span>
             </h1>
             <div className="flex flex-col items-start mt-2 mb-1">
