@@ -38,6 +38,8 @@ export async function getListings({
   askingItemID = null,
   filterOldListings = true,
   sortByRatio = true,
+  userID = null,
+  onlyOpenedListings = true,
 }) {
   const { data, error } = await supabaseAdmin.rpc("get_listings", {
     p_asking_item_id: askingItemID,
@@ -48,6 +50,8 @@ export async function getListings({
     p_server: server,
 
     p_sort_by_ratio: sortByRatio,
+    p_user_id: userID,
+    p_only_opened: onlyOpenedListings,
   });
 
   if (error) {
@@ -90,20 +94,18 @@ export async function isUserListingCreator({
 
   console.log(listingDiscordID);
 
-  console.log(discordID)
+  console.log(discordID);
 
   return discordID === listingDiscordID;
 }
 
-export async function updateListingStatus({
-  isClosed, listingID
-}) {
+export async function updateListingStatus({ isClosed, listingID }) {
   const { error } = await supabaseAdmin
     .from("listings")
     .update({
-      is_closed: isClosed
+      is_closed: isClosed,
     })
-    .eq("id", listingID)
+    .eq("id", listingID);
 
   if (error) {
     throw new Error(error.message);
