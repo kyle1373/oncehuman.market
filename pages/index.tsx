@@ -192,7 +192,7 @@ export default function Home(props) {
           <select
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
-            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+            className={`p-2 h-10 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
               !specificServer &&
               "opacity-80 text-neutral-500 cursor-not-allowed"
             }`}
@@ -203,7 +203,7 @@ export default function Home(props) {
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value)}
-            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
+            className={`p-2 h-10 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
               !specificServer &&
               "opacity-80 text-neutral-500 cursor-not-allowed"
             }`}
@@ -218,7 +218,7 @@ export default function Home(props) {
             onChange={(e) => setTwoDigitNumber(e.target.value)}
             maxLength={2}
             placeholder="01"
-            className={`p-2 border border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
+            className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
               !specificServer &&
               "opacity-80 text-neutral-500 cursor-not-allowed"
             }`}
@@ -230,7 +230,7 @@ export default function Home(props) {
             onChange={(e) => setFiveDigitNumber(e.target.value)}
             maxLength={5}
             placeholder="00001"
-            className={`p-2 border border-neutral-600 bg-neutral-700 rounded w-[70px] ${
+            className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded w-[70px] ${
               !specificServer &&
               "opacity-80 text-neutral-500 cursor-not-allowed"
             }`}
