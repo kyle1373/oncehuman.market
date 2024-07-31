@@ -8,6 +8,7 @@ import "nprogress/nprogress.css";
 import { useUser } from "@hooks/UserContext";
 import { LINKS } from "@constants/constants";
 import { FaDiscord } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 
 const TopbarWrapper = ({ children }) => {
   const { discordId, discordUsername, discordEmail, discordImage } = useUser(); // Destructure user data
@@ -53,14 +54,14 @@ const TopbarWrapper = ({ children }) => {
             href={LINKS.discord}
             className="hover:underline mr-5 text-neutral-400 hover:text-neutral-200"
           >
-            <FaDiscord className="sm:h-7 sm:w-7 w-6 h-6" />
+            <FaDiscord className="h-7 w-7" />
           </Link>
 
           {!!discordId ? ( // Check if userId is available
             <div className="relative" ref={dropdownRef}>
               <img
                 src={discordImage}
-                className="rounded-full border-[1px] border-neutral-600 sm:h-9 sm:w-9 h-8 w-8 cursor-pointer"
+                className="rounded-full border border-neutral-600 sm:h-9 sm:w-9 h-8 w-8 cursor-pointer"
                 onClick={handleDropdownClick}
               ></img>
               {dropdownOpen && (
@@ -89,7 +90,7 @@ const TopbarWrapper = ({ children }) => {
             </div>
           ) : (
             <button onClick={() => signIn("discord")}>
-              <MdOutlineLogin className="text-neutral-300" size={35} />
+              <FaUserCircle className="text-neutral-400 hover:text-neutral-200 sm:h-8 sm:w-8 h-7 w-7" />
             </button>
           )}
         </div>
