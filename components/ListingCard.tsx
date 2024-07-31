@@ -266,7 +266,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         <div className="p-4">
           <div className="space-y-2">
             <div>
-              <h3 className="text-xl font-semibold">Selling Item</h3>
+              <h3 className="text-xl font-semibold underline">Selling Item</h3>
               <p>
                 {sellingItem.name} ({sellingItem.amount})
               </p>
@@ -274,7 +274,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
             <div>
               <div className="flex mb-1 items-center">
-                <h3 className="text-xl font-semibold mr-3">User Info</h3>
+                <h3 className="text-xl font-semibold mr-3 underline">
+                  User Info
+                </h3>
                 <Link
                   href={`/profile/${entry.user_info.id}`}
                   className="bg-neutral-600 hover:bg-neutral-500 px-4 rounded flex items-center justify-center h-6"
@@ -283,8 +285,18 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                 </Link>
               </div>
 
-              <p>Username: {entry.listing.oncehuman_username}</p>
-              <p>Discord: {entry.user_info.discord_name}</p>
+              <p>
+                IGN:{" "}
+                <span className="text-red-300 font-bold">
+                  {entry.listing.oncehuman_username}
+                </span>
+              </p>
+              <p>
+                Discord:{" "}
+                <span className="text-blue-300 font-bold">
+                  {entry.user_info.discord_name}
+                </span>
+              </p>
               <p>
                 Last Online:{" "}
                 <LastOnlineDateComponent
@@ -293,7 +305,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold">
+              <h3 className="text-xl font-semibold underline">
                 Items Asking (any of one)
               </h3>
               {entry.items_asking?.map((item, index) => (
@@ -305,7 +317,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               ))}
             </div>
             <div>
-              <h3 className="text-xl font-semibold">Listing Info</h3>
+              <h3 className="text-xl font-semibold underline">Listing Info</h3>
               <p>Region: {entry.listing.region}</p>
               <p>Server: {entry.listing.server}</p>
               <p>World: {entry.listing.world}</p>
@@ -337,8 +349,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           )}
         </div>
         <h1 className="text-center text-gray-300 text-lg px-4 py-2 ">
-          If you are interested in this offer, contact the seller via Discord or
-          Once Human under "User Info"
+          Add seller as a friend to message them in game or contact them through Discord
         </h1>
       </Modal>
     </>

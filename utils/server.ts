@@ -59,4 +59,4 @@ export async function getListings({
 }
 
 
-export async function updateListing({ listingID }: { listingID: number, sellingItemIDs: string[], askingItemIDs: string[],  }) {}
+export async function updateListing({ listingID }: { listingID: number, sellingItemIDs: number[], askingItemIDs: number[],  }) {}

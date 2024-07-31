@@ -4,7 +4,8 @@ import SEO from "@components/SEO";
 import { ClipLoader } from "react-spinners";
 import ListingCard from "@components/ListingCard";
 import ItemSearchDropdown from "@components/ItemSearchDropdown";
-import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
+import { usePageCache } from "@hooks/usePageCache";
+import { FaPlus } from "react-icons/fa";
 
 export default function Home(props) {
   const { pageCache, cachePageData } = usePageCache();
@@ -153,7 +154,7 @@ export default function Home(props) {
 
   return (
     <main className="min-h-screen w-full overflow-y-auto">
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative mb-20">
         <SEO />
         <div className="w-full max-w-lg px-4">
           <h1 className="mt-8 mb-1 text-neutral-300 text-lg">
@@ -264,6 +265,9 @@ export default function Home(props) {
             )}
           </div>
         )}
+        <button className="fixed right-10 bottom-10 rounded-full w-16 h-16 bg-oncehuman-lightBlue bg-opacity-30 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
+          <FaPlus className="opacity-80" size={30} />
+        </button>
       </div>
     </main>
   );
