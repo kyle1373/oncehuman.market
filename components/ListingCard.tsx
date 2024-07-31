@@ -290,7 +290,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Listing Details"
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white rounded-lg shadow-lg max-w-lg w-full max-h-[60vh] overflow-y-auto"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 p-4"
       >
         <div className="p-4">
