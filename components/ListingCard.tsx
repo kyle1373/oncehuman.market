@@ -98,7 +98,10 @@ const ListingCard = ({ entry }: ListingCardProps) => {
     return <span className="italic">({formattedDate})</span>;
   };
 
-  function toggleListingVisibility() {}
+  function toggleListingVisibility() {
+    // Do some loading here
+    setListingClosed((prevState) => !prevState);
+  }
 
   function formatPostDate(dateString) {
     // Create a Date object from the input datetime string
@@ -318,11 +321,12 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
             <div>
               <h3 className="text-xl font-semibold underline">Listing Info</h3>
+              <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
+              <p>Status: {listingClosed ? "Closed" : "Open"}</p>
               <p>Region: {entry.listing.region}</p>
               <p>Server: {entry.listing.server}</p>
               <p>World: {entry.listing.world}</p>
               <p>Location: {entry.listing.location}</p>
-              <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
             </div>
           </div>
         </div>
@@ -337,7 +341,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           )}
           {discordId === entry.user_info.discord_id && (
             <button
-              onClick={closeModal}
+              onClick={toggleListingVisibility}
               className={`${
                 !listingClosed
                   ? "bg-red-700 hover:bg-red-600"
@@ -349,7 +353,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           )}
         </div>
         <h1 className="text-center text-gray-300 text-lg px-4 py-2 ">
-          Add seller as a friend to message them in game or contact them through Discord
+          Add seller as a friend to message them in game or contact them through
+          Discord
         </h1>
       </Modal>
     </>
