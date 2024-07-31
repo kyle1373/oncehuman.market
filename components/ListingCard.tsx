@@ -5,6 +5,8 @@ import { Tooltip } from "react-tooltip";
 import Modal from "react-modal";
 import { LINKS } from "@constants/constants";
 import "react-tooltip/dist/react-tooltip.css";
+import getOnlineStatus from "@utils/helpers";
+import Link from "next/link";
 
 type Listing = {
   id: number;
@@ -71,17 +73,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
     useEffect(() => {
       const updateFormattedDate = () => {
-        const now = new Date().getTime();
-        const lastOnlineDate = new Date(timestamp).getTime();
-        const differenceInMinutes = (now - lastOnlineDate) / 1000 / 60;
-
-        if (differenceInMinutes < 5) {
-          setFormattedDate("online");
-        } else {
-          setFormattedDate(
-            `online ${formatDistanceToNow(lastOnlineDate, { addSuffix: true })}`
-          );
-        }
+        setFormattedDate(getOnlineStatus(timestamp));
       };
 
       updateFormattedDate(); // Initial update
@@ -99,8 +91,18 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
     // Define arrays for month names
     const months = [
-        "January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     // Extract day, month, year, hours, and minutes from the Date object
@@ -111,29 +113,35 @@ const ListingCard = ({ entry }: ListingCardProps) => {
     const minutes = date.getMinutes();
 
     // Determine the AM/PM suffix
-    const ampm = hours >= 12 ? 'pm' : 'am';
+    const ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
 
     // Helper function to determine the ordinal suffix for the day
     function getOrdinalSuffix(day) {
-        if (day > 3 && day < 21) return 'th';
-        switch (day % 10) {
-            case 1: return 'st';
-            case 2: return 'nd';
-            case 3: return 'rd';
-            default: return 'th';
-        }
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
     }
 
     // Format minutes to always be two digits
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
 
     // Format the date string
-    const formattedDate = `${month} ${day}${getOrdinalSuffix(day)}, ${year} at ${hours}:${formattedMinutes}${ampm}`;
+    const formattedDate = `${month} ${day}${getOrdinalSuffix(
+      day
+    )}, ${year} at ${hours}:${formattedMinutes}${ampm}`;
 
     return formattedDate;
-}
+  }
 
   const sellingItem =
     entry.items_selling?.length > 0 ? entry.items_selling[0] : ({} as any);
@@ -219,9 +227,13 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           <h1 className="pr-4">
             World {entry.listing.world}: {entry.listing.location}
           </h1>
-          <h1 className="">{entry.listing.server}</h1>
+          <h1 className="">
+            {entry.listing.region}: {entry.listing.server}
+          </h1>
         </div>
-        <h1 className="italic text-xs text-sky-800 text-right px-4 pb-2">Posted {formatPostDate(entry.listing.created_at)}</h1>
+        <h1 className="italic text-xs text-sky-800 text-right px-4 pb-2">
+          Posted {formatPostDate(entry.listing.created_at)}
+        </h1>
       </button>
       <div className="h-4" />
       <Tooltip id={`tooltip-${sellingItem.item_id}`} />
@@ -233,51 +245,74 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         isOpen={isOpen}
         onRequestClose={closeModal}
         contentLabel="Listing Details"
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white p-4 rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 p-4"
       >
-        <h2 className="text-xl font-bold mb-4">Listing Details</h2>
-        <div className="space-y-2">
-          <div>
-            <h3 className="text-lg font-semibold">Selling Item</h3>
-            <p>{sellingItem.name}</p>
-            <p>Amount: {sellingItem.amount}</p>
-            <p>Total Stock: {sellingItem.total_stock}</p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">User Info</h3>
-            <p>Username: {entry.listing.oncehuman_username}</p>
-            <p>Discord: {entry.user_info.discord_name}</p>
-            <p>
-              Last Online:{" "}
-              <LastOnlineDateComponent
-                timestamp={entry.user_info.last_online}
-              />
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">Items Asking</h3>
-            {entry.items_asking?.map((item, index) => (
-              <div key={index}>
-                <p>{item.name}</p>
-                <p>Amount: {item.amount}</p>
+        <div className="p-4">
+          <div className="space-y-2">
+            <div>
+              <h3 className="text-lg font-semibold">Selling Item</h3>
+              <p>
+                {sellingItem.name} ({sellingItem.amount})
+              </p>
+              <p>Total Stock: {sellingItem.total_stock}</p>
+            </div>
+            <div>
+              <div className="flex mb-1 items-center">
+                <h3 className="text-lg font-semibold mr-3">User Info</h3>
+                <Link
+                  href={`/profile/${entry.user_info.id}`}
+                  className="bg-neutral-600 hover:bg-neutral-500 px-4 rounded flex items-center justify-center h-6"
+                >
+                  <span className="text-xs text-white">View Profile</span>
+                </Link>
               </div>
-            ))}
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">Listing Info</h3>
-            <p>Region: {entry.listing.region}</p>
-            <p>Server: {entry.listing.server}</p>
-            <p>World: {entry.listing.world}</p>
-            <p>Location: {entry.listing.location}</p>
+
+              <p>Username: {entry.listing.oncehuman_username}</p>
+              <p>Discord: {entry.user_info.discord_name}</p>
+              <p>
+                Last Online:{" "}
+                <LastOnlineDateComponent
+                  timestamp={entry.user_info.last_online}
+                />
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">
+                Items Asking (any of one)
+              </h3>
+              {entry.items_asking?.map((item, index) => (
+                <div key={index}>
+                  <p>
+                    {item.name} ({item.amount})
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">Listing Info</h3>
+              <p>Region: {entry.listing.region}</p>
+              <p>Server: {entry.listing.server}</p>
+              <p>World: {entry.listing.world}</p>
+              <p>Location: {entry.listing.location}</p>
+              <p>Posted {formatPostDate(entry.listing.created_at)}</p>
+            </div>
           </div>
         </div>
-        <button
-          onClick={closeModal}
-          className="mt-4 bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
-        >
-          Close
-        </button>
+        <div className="flex border-t border-gray-400 p-4 gap-4">
+          <button
+            onClick={closeModal}
+            className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
+          >
+            Close
+          </button>
+          <button
+            onClick={closeModal}
+            className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
+          >
+            Delete
+          </button>
+        </div>
       </Modal>
     </>
   );

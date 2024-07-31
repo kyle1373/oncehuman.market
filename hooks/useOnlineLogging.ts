@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const useOnlineLogging = () => {
+const activateOnlineLogging = () => {
   useEffect(() => {
     let lastLoggedTime = Date.now();
     let isFirstTime = true
@@ -51,4 +51,4 @@ const useOnlineLogging = () => {
   }, []);
 };
 
-export default useOnlineLogging;
+export default activateOnlineLogging;

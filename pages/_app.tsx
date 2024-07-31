@@ -2,12 +2,15 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import Script from "next/script";
-import useOnlineLogging from "@hooks/useOnlineLogging";
+import activateOnlineLogging from "@hooks/useOnlineLogging";
 import TopbarWrapper from "@components/TopBarWrapper";
 import Router, { useRouter } from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect } from "react";
+import { Provider } from "react-redux";
+import store from "@redux/store";
+import { activatePageCache } from "@hooks/usePageCache";
 
 NProgress.configure({ showSpinner: false });
 
@@ -23,7 +26,7 @@ const handleRouteChangeError = () => {
   NProgress.done();
 };
 
-export default function App({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     Router.events.on("routeChangeStart", handleRouteChangeStart);
@@ -37,7 +40,8 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, []);
   
-  useOnlineLogging(); // Call online logging here
+  activateOnlineLogging();
+  activatePageCache();
 
   return (
     <SessionProvider session={pageProps.session}>
@@ -52,5 +56,13 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </TopbarWrapper>
     </SessionProvider>
+  );
+}
+
+export default function App(props: AppProps) {
+  return (
+    <Provider store={store}>
+      <MyApp {...props} />
+    </Provider>
   );
 }

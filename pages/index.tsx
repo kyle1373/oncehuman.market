@@ -19,7 +19,8 @@ export default function Home(props) {
   const [twoDigitNumber, setTwoDigitNumber] = useState("");
   const [fiveDigitNumber, setFiveDigitNumber] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("NA");
-  const [specificServer, setSpecificServer] = useState(false); // Control the checkbox state
+  const [specificServer, setSpecificServer] = useState(false);
+  const [removeOldListings, setRemoveOldListings] = useState(true)
 
   const searchListings = async () => {
     if (fetchingListings) {
@@ -119,7 +120,7 @@ export default function Home(props) {
           <input
             type="checkbox"
             checked={specificServer}
-            onChange={() => setSpecificServer(!specificServer)}
+            onChange={() => setSpecificServer((prevState) => !prevState)}
             className="mr-1"
           />
           Search specific server
@@ -173,6 +174,16 @@ export default function Home(props) {
             disabled={!specificServer}
           />
         </div>
+
+        <label className="text-neutral-300 mt-4 mb-2">
+          <input
+            type="checkbox"
+            checked={removeOldListings}
+            onChange={() => setRemoveOldListings((prevState) => !prevState)}
+            className="mr-1"
+          />
+          Remove listings older than 7 days
+        </label>
         <button
           onClick={() => searchListings()}
           className="py-2 px-7 bg-blue-500 text-white rounded mt-4"
