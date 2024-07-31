@@ -1,10 +1,11 @@
 export const SEO_METADATA = {
-  title: "Once Human Market",
+  title: "Mayfly Market",
   description:
-    "OnceHuman.Market is the ultimate marketplace for trading any item, deviant, or service!",
+    "Mayfly.Market is the ultimate Once Human marketplace for trading any item, deviant, or service!",
   image: null,
 };
 
 export const LINKS = {
-  baseImagePath: "https://uwekgclrweeafrminfgh.supabase.co/storage/v1/object/public/images"
+  baseImagePath: "https://uwekgclrweeafrminfgh.supabase.co/storage/v1/object/public/images",
+  discord: "https://discord.gg/KxgSEwXATV"
 }
