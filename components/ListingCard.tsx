@@ -65,48 +65,27 @@ type ListingEntry = {
 type ListingCardProps = {
   entry: ListingEntry;
   className?: any;
+  cacheKey: string;
 };
 
 Modal.setAppElement("#__next"); // Required for accessibility
 
-const ListingCard = ({ entry }: ListingCardProps) => {
+const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
   const { discordId, showLoading } = useUser(); // Destructure user data
 
   const { pageCache, cachePageData } = usePageCache();
   const [listingClosed, setListingClosed] = useState(
-    pageCache(`/listing/${entry.listing.id}`, "listingClosed") ??
-      entry.listing.is_closed
+    pageCache(cacheKey, "listingClosed") ?? entry.listing.is_closed
   );
 
   const [isModalOpen, setIsModalOpen] = useState(
-    pageCache(`/listing/${entry.listing.id}`, "isOpen") ?? false
+    pageCache(cacheKey, "isOpen") ?? false
   );
 
   useEffect(() => {
-    cachePageData(`/listing/${entry.listing.id}`, "isOpen", isModalOpen);
-    cachePageData(
-      `/listing/${entry.listing.id}`,
-      "listingClosed",
-      listingClosed
-    );
+    cachePageData(cacheKey, "isOpen", isModalOpen);
+    cachePageData(cacheKey, "listingClosed", listingClosed);
   }, [isModalOpen, listingClosed]);
-
-  const LastOnlineDateComponent = ({ timestamp }) => {
-    const [formattedDate, setFormattedDate] = useState("");
-
-    useEffect(() => {
-      const updateFormattedDate = () => {
-        setFormattedDate(getOnlineStatus(timestamp));
-      };
-
-      updateFormattedDate(); // Initial update
-      const interval = setInterval(updateFormattedDate, 1000); // Update every second
-
-      return () => clearInterval(interval);
-    }, [timestamp]);
-
-    return <span className="italic">({formattedDate})</span>;
-  };
 
   async function toggleListingVisibility() {
     showLoading(true);
@@ -233,9 +212,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <h1 className="font-bold sm:text-lg text-sm">{sellingItem.name}</h1>
             <h1 className="font-normal sm:text-xs text-[10px]">
               {entry.listing.oncehuman_username}{" "}
-              <LastOnlineDateComponent
-                timestamp={entry.user_info.last_online}
-              />
+              <span className="italic">
+                {getOnlineStatus(entry.user_info.last_online)}
+              </span>
             </h1>
             <div className="flex flex-col items-start mt-2 mb-1">
               <div className="flex justify-start">
@@ -360,12 +339,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                   {entry.user_info.discord_name}
                 </span>
               </p>
-              <p>
-                Last Online:{" "}
-                <LastOnlineDateComponent
-                  timestamp={entry.user_info.last_online}
-                />
-              </p>
+              <p>Status:{" " + getOnlineStatus(entry.user_info.last_online)}</p>
             </div>
             {entry.listing.description && (
               <div>

@@ -261,7 +261,13 @@ export default function Home(props) {
             <div className="mt-2 text-neutral-300">
               {listingResults.length > 0 ? (
                 listingResults.map((entry, index) => {
-                  return <ListingCard key={index} entry={entry} />;
+                  return (
+                    <ListingCard
+                      key={index}
+                      entry={entry}
+                      cacheKey={"/root/" + +entry.id + "listingcard"}
+                    />
+                  );
                 })
               ) : (
                 <p>{listingSearchMessage}</p>
