@@ -57,3 +57,6 @@ export async function getListings({
 
   return data;
 }
+
+
+export async function updateListing({ listingID }: { listingID: number, sellingItemIDs: string[], askingItemIDs: string[],  }) {}

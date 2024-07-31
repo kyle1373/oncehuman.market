@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Provider } from "react-redux";
 import store from "@redux/store";
 import { activatePageCache } from "@hooks/usePageCache";
+import { UserProvider } from "@hooks/UserContext";
 
 NProgress.configure({ showSpinner: false });
 
@@ -27,7 +28,6 @@ const handleRouteChangeError = () => {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
-
   useEffect(() => {
     Router.events.on("routeChangeStart", handleRouteChangeStart);
     Router.events.on("routeChangeComplete", handleRouteChangeComplete);
@@ -39,22 +39,24 @@ function MyApp({ Component, pageProps }: AppProps) {
       Router.events.off("routeChangeError", handleRouteChangeError);
     };
   }, []);
-  
+
   activateOnlineLogging();
   activatePageCache();
 
   return (
     <SessionProvider session={pageProps.session}>
-      {process.env.NODE_ENV === "production" && (
-        <Script
-          async
-          src="https://stats.superfx.dev/script.js"
-          data-website-id="8f001ca2-6c2b-4c17-8824-19d8776952c7"
-        />
-      )}
-      <TopbarWrapper>
-        <Component {...pageProps} />
-      </TopbarWrapper>
+      <UserProvider>
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            async
+            src="https://stats.superfx.dev/script.js"
+            data-website-id="8f001ca2-6c2b-4c17-8824-19d8776952c7"
+          />
+        )}
+        <TopbarWrapper>
+          <Component {...pageProps} />
+        </TopbarWrapper>
+      </UserProvider>
     </SessionProvider>
   );
 }

@@ -1,33 +1,30 @@
-import styled from "@emotion/styled";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { ClipLoader } from "react-spinners";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
-import { UserData } from "@constants/types";
+import styled from "@emotion/styled";
 
-export interface User {
-  user_id: number;
-  osu_name: string;
-  osu_picture: string;
-}
 // Define the shape of the context data
 interface UserContextProps {
-  user: UserData;
+  discordId: number | null;
+  discordUsername: string | null;
+  discordEmail: string | null;
+  discordImage: string | null;
   showLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setUser: React.Dispatch<React.SetStateAction<UserData>>;
 }
 
+// Create the UserContext with a default undefined value
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
-interface UserProviderProps {
-  children: ReactNode;
-}
+// Custom hook to use the UserContext
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
+};
 
 // Styled component for the overlay
 const LoadingOverlay = styled.div`
@@ -43,17 +40,25 @@ const LoadingOverlay = styled.div`
   z-index: 9999;
 `;
 
-// Create a provider component
-export const UserProvider = ({ children }: UserProviderProps) => {
-  const [currentUser, setCurrentUser] = useState<UserData>();
+// Create the UserProvider component
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const { data: session } = useSession();
+
   const [loading, showLoading] = useState<boolean>(false);
+
+  const discordId = parseInt((session?.user as any)?.id) ?? null;
+  const discordUsername = session?.user?.name ?? null;
+  const discordEmail = session?.user?.email ?? null;
+  const discordImage = session?.user?.image ?? null;
 
   return (
     <UserContext.Provider
       value={{
-        user: currentUser,
+        discordId,
+        discordUsername,
+        discordEmail,
+        discordImage,
         showLoading,
-        setUser: setCurrentUser,
       }}
     >
       {loading && (
@@ -64,13 +69,4 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       {children}
     </UserContext.Provider>
   );
-};
-
-// Create a custom hook to use the osu user context
-export const useUserContext = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUserContext must be used within a UserProvider");
-  }
-  return context;
 };

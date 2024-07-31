@@ -5,9 +5,10 @@ import { MdOutlineLogin } from "react-icons/md";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { useUser } from "@hooks/UserContext";
 
 const TopbarWrapper = ({ children }) => {
-  const { data: session } = useSession();
+  const { discordId, discordUsername, discordEmail, discordImage } = useUser(); // Destructure user data
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -43,10 +44,10 @@ const TopbarWrapper = ({ children }) => {
             <span className="text-oncehuman-lightRed">Market</span>
           </h6>
         </Link>
-        {!!session ? (
+        {!!discordId ? ( // Check if userId is available
           <div className="relative" ref={dropdownRef}>
             <img
-              src={session.user?.image}
+              src={discordImage}
               className="rounded-full border-[1px] border-neutral-600 h-11 w-11 cursor-pointer"
               onClick={handleDropdownClick}
             ></img>

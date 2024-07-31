@@ -8,6 +8,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import getOnlineStatus from "@utils/helpers";
 import Link from "next/link";
 import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
+import { useUser } from "@hooks/UserContext";
 
 type Listing = {
   id: number;
@@ -67,6 +68,10 @@ type ListingCardProps = {
 Modal.setAppElement("#__next"); // Required for accessibility
 
 const ListingCard = ({ entry }: ListingCardProps) => {
+  const { discordId, showLoading } = useUser(); // Destructure user data
+
+  const [listingClosed, setListingClosed] = useState(entry.listing.is_closed);
+
   const { pageCache, cachePageData } = usePageCache();
   const [isOpen, setIsOpen] = useState(
     pageCache(`/listing/${entry.listing.id}`, "isOpen") ?? false
@@ -92,6 +97,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
     return <span className="italic">({formattedDate})</span>;
   };
+
+  function toggleListingVisibility() {}
 
   function formatPostDate(dateString) {
     // Create a Date object from the input datetime string
@@ -307,22 +314,31 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
           </div>
         </div>
-        <div className="flex border-t border-gray-400 p-4 gap-4">
-          <button
-            onClick={closeModal}
-            className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
-          >
-            Close
-          </button>
-          <button
-            onClick={closeModal}
-            className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
-          >
-            Update Listing
-          </button>
+        <div className="flex border-t border-gray-400 px-4 gap-4">
+          {discordId === entry.user_info.discord_id && (
+            <button
+              onClick={closeModal}
+              className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
+            >
+              Update
+            </button>
+          )}
+          {discordId === entry.user_info.discord_id && (
+            <button
+              onClick={closeModal}
+              className={`${
+                !listingClosed
+                  ? "bg-red-700 hover:bg-red-600"
+                  : "bg-blue-700 hover:bg-blue-600"
+              } text-white py-2 px-4 rounded mt-4`}
+            >
+              {listingClosed ? "Reopen" : "Close"}
+            </button>
+          )}
         </div>
-        <h1 className="text-center text-gray-300 text-lg pb-4 px-4">
-          If you are interested in this offer, contact the seller via Discord or Once Human under "User Info"
+        <h1 className="text-center text-gray-300 text-lg px-4 py-2 ">
+          If you are interested in this offer, contact the seller via Discord or
+          Once Human under "User Info"
         </h1>
       </Modal>
     </>
