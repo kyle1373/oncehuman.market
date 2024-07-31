@@ -167,20 +167,18 @@ const ListingCard = ({ entry }: ListingCardProps) => {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  const getMainColor = () => {
-    return listingClosed ? "rose" : "sky";
-  };
+  const mainColor = listingClosed ? "rose" : "sky";
 
   return (
     <>
       <button
-        className={`bg-${getMainColor()}-950 border-${getMainColor()}-700 hover:bg-${getMainColor()}-900 border rounded-md sm:w-[370px] w-[280px] shadow-lg`}
+        className={`bg-${mainColor}-950 border-${mainColor}-700 hover:bg-${mainColor}-900 border rounded-md sm:w-[370px] w-[280px] shadow-lg`}
         onClick={openModal}
       >
         <div className="flex">
           <div className="flex flex-col items-center px-4 py-2 justify-center text-center">
             <div
-              className={`relative border-2 rounded-sm border-${getMainColor()}-950`}
+              className={`relative border-2 rounded-sm border-${mainColor}-950`}
               data-tooltip-id={`tooltip-${sellingItem.item_id}`}
               data-tooltip-content={
                 sellingItem.name + " (" + sellingItem.amount + ")"
@@ -221,7 +219,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                       }
                     >
                       <div
-                        className={`relative border rounded-sm border-${getMainColor()}-950`}
+                        className={`relative border rounded-sm border-${mainColor}-950`}
                       >
                         <img
                           className="sm:w-10 sm:h-10 w-8 h-8"
@@ -248,7 +246,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           </div>
         </div>
         <div
-          className={`flex flex-wrap justify-between px-4 pt-2 border-t border-${getMainColor()}-700 sm:text-sm text-xs break-all text-${getMainColor()}-500`}
+          className={`flex flex-wrap justify-between px-4 pt-2 border-t border-${mainColor}-700 sm:text-sm text-xs break-all text-${mainColor}-500`}
         >
           <h1 className="pr-4">
             World {entry.listing.world}: {entry.listing.location}
@@ -258,7 +256,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           </h1>
         </div>
         <h1
-          className={`italic text-xs text-${getMainColor()}-800 text-right px-4 pb-2`}
+          className={`italic text-xs text-${mainColor}-800 text-right px-4 pb-2`}
         >
           Posted {formatPostDate(entry.listing.created_at)}
         </h1>
