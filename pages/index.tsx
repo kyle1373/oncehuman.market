@@ -265,7 +265,7 @@ export default function Home(props) {
                     <ListingCard
                       key={index}
                       entry={entry}
-                      cacheKey={"/root/" + +entry.id + "listingcard"}
+                      cacheKey={"/root/" + entry.listing.id + "/listingcard"}
                     />
                   );
                 })

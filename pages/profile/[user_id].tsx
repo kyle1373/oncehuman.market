@@ -109,7 +109,7 @@ export default function Profile({ user, error }) {
           <div className="mt-8 text-neutral-300">
             {listingResults.length > 0 ? (
               listingResults.map((entry, index) => {
-                return <ListingCard key={index} entry={entry} cacheKey={"/profile/"+ user.id + entry.id + "profilelistingcard"}/>;
+                return <ListingCard key={index} entry={entry} cacheKey={"/profile/"+ user.id + "/listing_id/"+ entry.listing.id + "/profilelistingcard"}/>;
               })
             ) : (
               <p>{listingSearchMessage}</p>
