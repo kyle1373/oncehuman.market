@@ -70,16 +70,19 @@ Modal.setAppElement("#__next"); // Required for accessibility
 const ListingCard = ({ entry }: ListingCardProps) => {
   const { discordId, showLoading } = useUser(); // Destructure user data
 
-  const [listingClosed, setListingClosed] = useState(entry.listing.is_closed);
 
   const { pageCache, cachePageData } = usePageCache();
-  const [isOpen, setIsOpen] = useState(
+  const [listingClosed, setListingClosed] = useState(pageCache(`/listing/${entry.listing.id}`, "listingClosed") ?? entry.listing.is_closed);
+
+  const [isModalOpen, setIsModalOpen] = useState(
     pageCache(`/listing/${entry.listing.id}`, "isOpen") ?? false
   );
 
   useEffect(() => {
-    cachePageData(`/listing/${entry.listing.id}`, "isOpen", isOpen);
-  }, [isOpen]);
+    cachePageData(`/listing/${entry.listing.id}`, "isOpen", isModalOpen);
+    cachePageData(`/listing/${entry.listing.id}`, "listingClosed", listingClosed);
+
+  }, [isModalOpen, listingClosed]);
 
   const LastOnlineDateComponent = ({ timestamp }) => {
     const [formattedDate, setFormattedDate] = useState("");
@@ -164,8 +167,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
   const sellingItem =
     entry.items_selling?.length > 0 ? entry.items_selling[0] : ({} as any);
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <>
@@ -278,7 +281,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
       ))}
 
       <Modal
-        isOpen={isOpen}
+        isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Listing Details"
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto"
@@ -308,7 +311,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
 
               <p>
                 IGN:{" "}
-                <span className="text-red-300 font-bold">
+                <span className="text-orange-300 font-bold">
                   {entry.listing.oncehuman_username}
                 </span>
               </p>
@@ -340,7 +343,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             <div>
               <h3 className="text-xl font-semibold underline">Listing Info</h3>
               <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
-              <p>Status: {listingClosed ? "Closed" : "Open"}</p>
+              <p>Status: <span className={`font-bold ${listingClosed ? " text-red-500" : "text-green-500"}`}>{listingClosed ? "Closed" : "Open"}</span></p>
               <p>Region: {entry.listing.region}</p>
               <p>Server: {entry.listing.server}</p>
               <p>World: {entry.listing.world}</p>
