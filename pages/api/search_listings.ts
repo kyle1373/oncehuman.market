@@ -17,7 +17,6 @@ export default async function handler(
     server,
     askingItemID: asking_item_id,
     sellingItemID: selling_item_id,
-    filterOldListings: filter_old_listings !== "false",
   });
 
   if (!listings) {

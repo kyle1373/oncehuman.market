@@ -81,7 +81,7 @@ export default function Home(props) {
             ? selectedLookingForItem.id
             : null,
           asking_item_id: selectedOfferingItem ? selectedOfferingItem.id : null,
-          region: "NA",
+          region: selectedRegion,
           filter_old_listings: removeOldListings ? "true" : "false",
         },
       });
@@ -238,7 +238,7 @@ export default function Home(props) {
           />
         </div>
 
-        <label className="text-neutral-300 mt-4 mb-2">
+        {/* <label className="text-neutral-300 mt-4 mb-2">
           <input
             type="checkbox"
             checked={removeOldListings}
@@ -246,7 +246,7 @@ export default function Home(props) {
             className="mr-1"
           />
           Remove listings older than 7 days
-        </label>
+        </label> */}
         <button
           onClick={() => searchListings()}
           className="py-2 px-7 bg-blue-500 text-white rounded mt-4"
@@ -256,15 +256,18 @@ export default function Home(props) {
         {fetchingListings ? (
           <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
         ) : (
-          <div className="mt-8 text-neutral-300">
-            {listingResults.length > 0 ? (
-              listingResults.map((entry, index) => {
-                return <ListingCard key={index} entry={entry} />;
-              })
-            ) : (
-              <p>{listingSearchMessage}</p>
-            )}
-          </div>
+          <>
+            <h1 className="mt-8"> Showing listings in the last 7 days</h1>
+            <div className="mt-2 text-neutral-300">
+              {listingResults.length > 0 ? (
+                listingResults.map((entry, index) => {
+                  return <ListingCard key={index} entry={entry} />;
+                })
+              ) : (
+                <p>{listingSearchMessage}</p>
+              )}
+            </div>
+          </>
         )}
         <button className="fixed right-10 bottom-10 rounded-full w-16 h-16 bg-oncehuman-lightBlue bg-opacity-30 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
           <FaPlus className="opacity-80" size={30} />

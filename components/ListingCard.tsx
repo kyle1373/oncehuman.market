@@ -17,7 +17,7 @@ type Listing = {
   region: string;
   server: string;
   created_at: string;
-  description: null;
+  description: string;
   world: string;
   location: string;
   can_discord_contact_when_offline: boolean;
@@ -118,10 +118,10 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         },
       });
       setListingClosed((prevState) => !prevState);
-      if(listingClosed) {
-        toast("Opened your listing back up to the public!");
+      if (listingClosed) {
+        toast("Opened your listing back up to the public");
       } else {
-        toast("Closed your listing from the public!");
+        toast("Closed your listing to the public");
       }
     } catch (error) {
       console.error("Error updating listing status:", error?.response?.data);
@@ -324,6 +324,18 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               <p>Total Stock: {sellingItem.total_stock}</p>
             </div>
             <div>
+              <h3 className="text-xl font-semibold underline">
+                Items Asking (pick one)
+              </h3>
+              {entry.items_asking?.map((item, index) => (
+                <div key={index}>
+                  <p>
+                    {item.name} ({item.amount})
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div>
               <div className="flex mb-1 items-center">
                 <h3 className="text-xl font-semibold mr-3 underline">
                   User Info
@@ -355,18 +367,16 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                 />
               </p>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold underline">
-                Items Asking (any of one)
-              </h3>
-              {entry.items_asking?.map((item, index) => (
-                <div key={index}>
-                  <p>
-                    {item.name} ({item.amount})
-                  </p>
-                </div>
-              ))}
-            </div>
+            {entry.listing.description && (
+              <div>
+                <h3 className="text-xl font-semibold underline">
+                  Note from Seller
+                </h3>
+                <p className="italic text-blue-400">
+                  <span>{entry.listing.description}</span>
+                </p>
+              </div>
+            )}
             <div>
               <h3 className="text-xl font-semibold underline">Listing Info</h3>
               <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
@@ -387,13 +397,20 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
           </div>
         </div>
-        <div className="flex border-t border-gray-400 px-4 gap-4">
+
+        <div className="flex px-4 gap-4">
+          {/* <button
+            onClick={closeModal}
+            className="bg-blue-700 hover:bg-blue-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
+          >
+            Go Back
+          </button> */}
           {discordId === entry.user_info.discord_id && (
             <button
               onClick={closeModal}
-              className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
+              className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
             >
-              Update
+              Edit Listing
             </button>
           )}
           {discordId === entry.user_info.discord_id && (
@@ -402,16 +419,16 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               className={`${
                 !listingClosed
                   ? "bg-red-700 hover:bg-red-600"
-                  : "bg-blue-700 hover:bg-blue-600"
-              } text-white py-2 px-4 rounded mt-4`}
+                  : "bg-purple-700 hover:bg-purple-600"
+              } text-white py-2 px-4 rounded mt-4 sm:text-base text-xs`}
             >
-              {listingClosed ? "Reopen" : "Close"}
+              {listingClosed ? "Reopen Listing" : "Close Listing"}
             </button>
           )}
         </div>
-        <h1 className="text-center text-gray-300 text-lg px-4 py-2 font-bold">
-          Add the seller as a friend to message them in game or contact them
-          through Discord
+        <h1 className="text-center text-gray-300 text-lg px-4 pt-2 pb-3 font-bold">
+          To contact the seller, add {entry.listing.oncehuman_username} as a
+          friend ingame or message {entry.user_info.discord_name} on Discord
         </h1>
       </Modal>
     </>
