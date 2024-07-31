@@ -3,24 +3,51 @@ import axios from "axios";
 import SEO from "@components/SEO";
 import { ClipLoader } from "react-spinners";
 import ListingCard from "@components/ListingCard";
-import ItemSearchDropdown from "@components/ItemSearchDropdown"; // Import the new component
+import ItemSearchDropdown from "@components/ItemSearchDropdown";
+import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 
 export default function Home(props) {
-  const [lookingForItemQuery, setLookingForItemQuery] = useState("");
-  const [offeringItemQuery, setOfferingItemQuery] = useState("");
+  const { pageCache, cachePageData } = usePageCache();
 
-  const [listingResults, setListingResults] = useState([]);
+  const [lookingForItemQuery, setLookingForItemQuery] = useState(
+    pageCache("/", "lookingForItemQuery") ?? ""
+  );
+  const [offeringItemQuery, setOfferingItemQuery] = useState(
+    pageCache("/", "offeringItemQuery") ?? ""
+  );
+
+  const [listingResults, setListingResults] = useState(
+    pageCache("/", "listingResults") ?? []
+  );
   const [fetchingListings, setFetchingListings] = useState(false);
-  const [listingSearchMessage, setListingSearchMessage] = useState("");
-  const [selectedLookingForItem, setSelectedLookingForItem] = useState(null);
-  const [selectedOfferingItem, setSelectedOfferingItem] = useState(null);
+  const [listingSearchMessage, setListingSearchMessage] = useState(
+    pageCache("/", "listingSearchMessage") ?? ""
+  );
+  const [selectedLookingForItem, setSelectedLookingForItem] = useState(
+    pageCache("/", "selectedLookingForItem") ?? null
+  );
+  const [selectedOfferingItem, setSelectedOfferingItem] = useState(
+    pageCache("/", "selectedOfferingItem") ?? null
+  );
 
-  const [mode, setMode] = useState("PVE");
-  const [twoDigitNumber, setTwoDigitNumber] = useState("");
-  const [fiveDigitNumber, setFiveDigitNumber] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("NA");
-  const [specificServer, setSpecificServer] = useState(false);
-  const [removeOldListings, setRemoveOldListings] = useState(true)
+  const [mode, setMode] = useState(pageCache("/", "mode") ?? "PVE");
+  const [twoDigitNumber, setTwoDigitNumber] = useState(
+    pageCache("/", "twoDigitNumber") ?? ""
+  );
+  const [fiveDigitNumber, setFiveDigitNumber] = useState(
+    pageCache("/", "fiveDigitNumber") ?? ""
+  );
+  const [selectedRegion, setSelectedRegion] = useState(
+    pageCache("/", "selectedRegion") ?? "NA"
+  );
+  const [specificServer, setSpecificServer] = useState(
+    pageCache("/", "specificServer") ?? false
+  );
+  const [removeOldListings, setRemoveOldListings] = useState(
+    pageCache("/", "removeOldListings") ?? true
+  );
+
+  const isMounted = useRef(false);
 
   const searchListings = async () => {
     if (fetchingListings) {
@@ -81,16 +108,48 @@ export default function Home(props) {
   };
 
   useEffect(() => {
-    searchListings();
+    if (listingResults.length === 0) {
+      searchListings();
+    }
   }, []);
 
   useEffect(() => {
     console.log(selectedLookingForItem);
     console.log(selectedOfferingItem);
-    if (selectedLookingForItem && selectedOfferingItem) {
+    if (isMounted.current && selectedLookingForItem && selectedOfferingItem) {
       searchListings();
     }
+    isMounted.current = true;
   }, [selectedLookingForItem, selectedOfferingItem]);
+
+  useEffect(() => {
+    console.log(listingResults);
+    cachePageData("/", "lookingForItemQuery", lookingForItemQuery);
+    cachePageData("/", "offeringItemQuery", offeringItemQuery);
+    cachePageData("/", "listingResults", listingResults);
+    cachePageData("/", "listingSearchMessage", listingSearchMessage);
+    cachePageData("/", "selectedLookingForItem", selectedLookingForItem);
+    cachePageData("/", "selectedOfferingItem", selectedOfferingItem);
+    cachePageData("/", "mode", mode);
+    cachePageData("/", "twoDigitNumber", twoDigitNumber);
+    cachePageData("/", "fiveDigitNumber", fiveDigitNumber);
+    cachePageData("/", "selectedRegion", selectedRegion);
+    cachePageData("/", "specificServer", specificServer);
+    cachePageData("/", "removeOldListings", removeOldListings);
+  }, [
+    lookingForItemQuery,
+    offeringItemQuery,
+    listingResults,
+    listingSearchMessage,
+    selectedLookingForItem,
+    selectedOfferingItem,
+    mode,
+    twoDigitNumber,
+    fiveDigitNumber,
+    selectedRegion,
+    specificServer,
+    removeOldListings,
+  ]);
 
   return (
     <main className="min-h-screen w-full overflow-y-auto">
@@ -104,6 +163,7 @@ export default function Home(props) {
             query={lookingForItemQuery}
             setQuery={setLookingForItemQuery}
             onItemSelect={handleLookingForItemSelect}
+            cacheKey="/root/lookingForItem"
           />
         </div>
         <div className="w-full max-w-lg px-4">
@@ -114,6 +174,7 @@ export default function Home(props) {
             query={offeringItemQuery}
             setQuery={setOfferingItemQuery}
             onItemSelect={handleOfferingItemSelect}
+            cacheKey="/root/offeringItem"
           />
         </div>
         <label className="text-neutral-300 mt-4 mb-2">

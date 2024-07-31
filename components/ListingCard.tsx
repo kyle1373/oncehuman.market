@@ -7,6 +7,7 @@ import { LINKS } from "@constants/constants";
 import "react-tooltip/dist/react-tooltip.css";
 import getOnlineStatus from "@utils/helpers";
 import Link from "next/link";
+import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 
 type Listing = {
   id: number;
@@ -66,7 +67,14 @@ type ListingCardProps = {
 Modal.setAppElement("#__next"); // Required for accessibility
 
 const ListingCard = ({ entry }: ListingCardProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { pageCache, cachePageData } = usePageCache();
+  const [isOpen, setIsOpen] = useState(
+    pageCache(`/listing/${entry.listing.id}`, "isOpen") ?? false
+  );
+
+  useEffect(() => {
+    cachePageData(`/listing/${entry.listing.id}`, "isOpen", isOpen);
+  }, [isOpen]);
 
   const LastOnlineDateComponent = ({ timestamp }) => {
     const [formattedDate, setFormattedDate] = useState("");
@@ -251,7 +259,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
         <div className="p-4">
           <div className="space-y-2">
             <div>
-              <h3 className="text-lg font-semibold">Selling Item</h3>
+              <h3 className="text-xl font-semibold">Selling Item</h3>
               <p>
                 {sellingItem.name} ({sellingItem.amount})
               </p>
@@ -259,7 +267,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
             <div>
               <div className="flex mb-1 items-center">
-                <h3 className="text-lg font-semibold mr-3">User Info</h3>
+                <h3 className="text-xl font-semibold mr-3">User Info</h3>
                 <Link
                   href={`/profile/${entry.user_info.id}`}
                   className="bg-neutral-600 hover:bg-neutral-500 px-4 rounded flex items-center justify-center h-6"
@@ -278,7 +286,7 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-xl font-semibold">
                 Items Asking (any of one)
               </h3>
               {entry.items_asking?.map((item, index) => (
@@ -290,12 +298,12 @@ const ListingCard = ({ entry }: ListingCardProps) => {
               ))}
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Listing Info</h3>
+              <h3 className="text-xl font-semibold">Listing Info</h3>
               <p>Region: {entry.listing.region}</p>
               <p>Server: {entry.listing.server}</p>
               <p>World: {entry.listing.world}</p>
               <p>Location: {entry.listing.location}</p>
-              <p>Posted {formatPostDate(entry.listing.created_at)}</p>
+              <p>Posted: {formatPostDate(entry.listing.created_at)}</p>
             </div>
           </div>
         </div>
@@ -310,9 +318,12 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             onClick={closeModal}
             className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
           >
-            Delete
+            Update Listing
           </button>
         </div>
+        <h1 className="text-center text-gray-300 text-lg pb-4 px-4">
+          If you are interested in this offer, contact the seller via Discord or Once Human under "User Info"
+        </h1>
       </Modal>
     </>
   );

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, SetStateAction, Dispatch } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { LINKS } from "@constants/constants";
+import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 
 type ItemSearchDropdownProps = {
   query: string;
@@ -9,32 +10,53 @@ type ItemSearchDropdownProps = {
   onItemSelect: (item: any) => void;
   placeHolder?: string;
   className?: string;
+  cacheKey: string;
 };
+
 const ItemSearchDropdown = ({
   query,
   setQuery,
   onItemSelect,
   className = "",
   placeHolder = "Search items...",
+  cacheKey,
 }: ItemSearchDropdownProps) => {
-  const [itemSearchResults, setItemSearchResults] = useState([]);
-  const [fetchingItems, setFetchingItems] = useState(false);
+  const { pageCache, cachePageData } = usePageCache();
+
+  const [itemSearchResults, setItemSearchResults] = useState(
+    pageCache("/", `${cacheKey}-itemSearchResults`) ?? []
+  );
+  const [fetchingItems, setFetchingItems] = useState(
+    pageCache("/", `${cacheKey}-fetchingItems`) ?? false
+  );
   const [itemSearchMessage, setItemSearchMessage] = useState(
-    "Items will appear here."
+    pageCache("/", `${cacheKey}-itemSearchMessage`) ?? "Items will appear here."
   );
   const [showModal, setShowModal] = useState(false);
-  const [modalActive, setModalActive] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<any>();
+  const [modalActive, setModalActive] = useState(
+    pageCache("/", `${cacheKey}-modalActive`) ?? true
+  );
+  const [selectedItem, setSelectedItem] = useState(
+    pageCache("/", `${cacheKey}-selectedItem`) ?? null
+  );
   const inputRef = useRef(null);
   const timeoutRef = useRef(null);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
+    const cachedResults = pageCache("/", `${cacheKey}-${query}`);
     if (!query) {
       setItemSearchResults([]);
       setShowModal(false);
       setItemSearchMessage("Items will appear here.");
-      setSelectedItem(null)
-      onItemSelect(null)
+      setSelectedItem(null);
+      onItemSelect(null);
+    } else if (cachedResults) {
+      setItemSearchResults(cachedResults);
+      if (!isFirstMount.current) {
+        setShowModal(true);
+      }
+      setItemSearchMessage(cachedResults.length > 0 ? "" : "No results found.");
     } else {
       const handler = setTimeout(() => {
         fetchItems(query);
@@ -46,7 +68,29 @@ const ItemSearchDropdown = ({
         clearTimeout(handler);
       };
     }
+
+    isFirstMount.current = false;
   }, [query]);
+
+  useEffect(() => {
+    cachePageData("/", `${cacheKey}-itemSearchResults`, itemSearchResults);
+    cachePageData("/", `${cacheKey}-fetchingItems`, fetchingItems);
+    cachePageData("/", `${cacheKey}-itemSearchMessage`, itemSearchMessage);
+    cachePageData("/", `${cacheKey}-showModal`, showModal);
+    cachePageData("/", `${cacheKey}-modalActive`, modalActive);
+    cachePageData("/", `${cacheKey}-selectedItem`, selectedItem);
+    if (query) {
+      cachePageData("/", `${cacheKey}-${query}`, itemSearchResults);
+    }
+  }, [
+    itemSearchResults,
+    fetchingItems,
+    itemSearchMessage,
+    showModal,
+    modalActive,
+    selectedItem,
+    query,
+  ]);
 
   const fetchItems = async (search) => {
     setFetchingItems(true);
@@ -97,10 +141,7 @@ const ItemSearchDropdown = ({
   };
 
   return (
-    <div
-      ref={inputRef}
-      className={`relative w-full max-w-lg flex ${className}`}
-    >
+    <div ref={inputRef} className={`relative w-full max-w-lg flex ${className}`}>
       <input
         type="text"
         value={query}
