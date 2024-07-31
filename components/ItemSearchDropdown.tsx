@@ -24,27 +24,27 @@ const ItemSearchDropdown = ({
   const { pageCache, cachePageData } = usePageCache();
 
   const [itemSearchResults, setItemSearchResults] = useState(
-    pageCache("/", `${cacheKey}-itemSearchResults`) ?? []
+    pageCache(cacheKey, `itemSearchResults`) ?? []
   );
   const [fetchingItems, setFetchingItems] = useState(
-    pageCache("/", `${cacheKey}-fetchingItems`) ?? false
+    pageCache(cacheKey, `fetchingItems`) ?? false
   );
   const [itemSearchMessage, setItemSearchMessage] = useState(
-    pageCache("/", `${cacheKey}-itemSearchMessage`) ?? "Items will appear here."
+    pageCache(cacheKey, `itemSearchMessage`) ?? "Items will appear here."
   );
   const [showModal, setShowModal] = useState(false);
   const [modalActive, setModalActive] = useState(
-    pageCache("/", `${cacheKey}-modalActive`) ?? true
+    pageCache(cacheKey, `modalActive`) ?? true
   );
   const [selectedItem, setSelectedItem] = useState(
-    pageCache("/", `${cacheKey}-selectedItem`) ?? null
+    pageCache(cacheKey, `selectedItem`) ?? null
   );
   const inputRef = useRef(null);
   const timeoutRef = useRef(null);
   const isFirstMount = useRef(true);
 
   useEffect(() => {
-    const cachedResults = pageCache("/", `${cacheKey}-${query}`);
+    const cachedResults = pageCache(cacheKey, `${query}`);
     if (!query) {
       setItemSearchResults([]);
       setShowModal(false);
@@ -73,14 +73,14 @@ const ItemSearchDropdown = ({
   }, [query]);
 
   useEffect(() => {
-    cachePageData("/", `${cacheKey}-itemSearchResults`, itemSearchResults);
-    cachePageData("/", `${cacheKey}-fetchingItems`, fetchingItems);
-    cachePageData("/", `${cacheKey}-itemSearchMessage`, itemSearchMessage);
-    cachePageData("/", `${cacheKey}-showModal`, showModal);
-    cachePageData("/", `${cacheKey}-modalActive`, modalActive);
-    cachePageData("/", `${cacheKey}-selectedItem`, selectedItem);
+    cachePageData(cacheKey, `itemSearchResults`, itemSearchResults);
+    cachePageData(cacheKey, `fetchingItems`, fetchingItems);
+    cachePageData(cacheKey, `itemSearchMessage`, itemSearchMessage);
+    cachePageData(cacheKey, `showModal`, showModal);
+    cachePageData(cacheKey, `modalActive`, modalActive);
+    cachePageData(cacheKey, `selectedItem`, selectedItem);
     if (query) {
-      cachePageData("/", `${cacheKey}-${query}`, itemSearchResults);
+      cachePageData(cacheKey, `${query}`, itemSearchResults);
     }
   }, [
     itemSearchResults,
@@ -141,7 +141,10 @@ const ItemSearchDropdown = ({
   };
 
   return (
-    <div ref={inputRef} className={`relative w-full max-w-lg flex ${className}`}>
+    <div
+      ref={inputRef}
+      className={`relative w-full max-w-lg flex ${className}`}
+    >
       <input
         type="text"
         value={query}
