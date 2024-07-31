@@ -167,16 +167,20 @@ const ListingCard = ({ entry }: ListingCardProps) => {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
+  const getMainColor = () => {
+    return listingClosed ? "rose" : "sky";
+  };
+
   return (
     <>
       <button
-        className="bg-sky-950 border border-sky-700 rounded-md sm:w-[370px] w-[280px] hover:bg-sky-900 shadow-lg"
+        className={`bg-${getMainColor()}-950 border-${getMainColor()}-700 hover:bg-${getMainColor()}-900 border rounded-md sm:w-[370px] w-[280px] shadow-lg`}
         onClick={openModal}
       >
         <div className="flex">
           <div className="flex flex-col items-center px-4 py-2 justify-center text-center">
             <div
-              className="relative border-2 rounded-sm border-sky-950"
+              className={`relative border-2 rounded-sm border-${getMainColor()}-950`}
               data-tooltip-id={`tooltip-${sellingItem.item_id}`}
               data-tooltip-content={
                 sellingItem.name + " (" + sellingItem.amount + ")"
@@ -216,7 +220,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
                         item.name + " (" + item.amount + ")"
                       }
                     >
-                      <div className="relative border rounded-sm border-sky-950">
+                      <div
+                        className={`relative border rounded-sm border-${getMainColor()}-950`}
+                      >
                         <img
                           className="sm:w-10 sm:h-10 w-8 h-8"
                           src={LINKS.baseImagePath + item.s3_image_path}
@@ -241,7 +247,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap justify-between px-4 pt-2 border-t border-sky-700 sm:text-sm text-xs break-all text-sky-500">
+        <div
+          className={`flex flex-wrap justify-between px-4 pt-2 border-t border-${getMainColor()}-700 sm:text-sm text-xs break-all text-${getMainColor()}-500`}
+        >
           <h1 className="pr-4">
             World {entry.listing.world}: {entry.listing.location}
           </h1>
@@ -249,7 +257,9 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             {entry.listing.region}: {entry.listing.server}
           </h1>
         </div>
-        <h1 className="italic text-xs text-sky-800 text-right px-4 pb-2">
+        <h1
+          className={`italic text-xs text-${getMainColor()}-800 text-right px-4 pb-2`}
+        >
           Posted {formatPostDate(entry.listing.created_at)}
         </h1>
       </button>
@@ -353,8 +363,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
           )}
         </div>
         <h1 className="text-center text-gray-300 text-lg px-4 py-2 font-bold">
-          Add the seller as a friend to message them in game or contact them through
-          Discord
+          Add the seller as a friend to message them in game or contact them
+          through Discord
         </h1>
       </Modal>
     </>
