@@ -27,6 +27,7 @@ body::before {
   background: url('/oncehumanbg.png') center center/cover no-repeat, black;
   filter: blur(7px) brightness(0.3);
   z-index: -1;
+  background-attachment: fixed; /* Add this line to fix the background image */
 }
 
 @layer utilities {
@@ -34,7 +35,6 @@ body::before {
     text-wrap: balance;
   }
 }
-
 
 #nprogress .bar {
   background: #fc3f6b !important;
