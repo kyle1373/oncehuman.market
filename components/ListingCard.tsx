@@ -352,8 +352,8 @@ const ListingCard = ({ entry }: ListingCardProps) => {
             </button>
           )}
         </div>
-        <h1 className="text-center text-gray-300 text-lg px-4 py-2 ">
-          Add seller as a friend to message them in game or contact them through
+        <h1 className="text-center text-gray-300 text-lg px-4 py-2 font-bold">
+          Add the seller as a friend to message them in game or contact them through
           Discord
         </h1>
       </Modal>
