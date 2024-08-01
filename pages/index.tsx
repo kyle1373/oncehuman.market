@@ -275,8 +275,8 @@ export default function Home(props) {
             </div>
           </>
         )}
-        <button className="fixed right-7 bottom-7 rounded-full w-16 h-16 bg-oncehuman-lightBlue bg-opacity-60 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
-          <FaPlus className="opacity-80" size={30} />
+        <button className="fixed right-7 bottom-7 rounded-full w-20 h-14 bg-oncehuman-lightBlue bg-opacity-60 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
+          <FaPlus className="text-white" size={30} />
         </button>
       </div>
     </main>
