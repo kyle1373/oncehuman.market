@@ -6,8 +6,30 @@ import ListingCard from "@components/ListingCard";
 import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { usePageCache } from "@hooks/usePageCache";
 import { FaPlus } from "react-icons/fa";
+import { useMediaQuery } from 'react-responsive';
+import { useRouter } from "next/router";
+
 
 export default function Home(props) {
+
+  const isMobile = useMediaQuery({ query: '(max-width: 640px)' });
+  const isTablet = useMediaQuery({ query: '(min-width: 641px) and (max-width: 1024px)' });
+  const isDesktop = useMediaQuery({ query: '(min-width: 1025px)' });
+
+  const getButtonSize = () => {
+    if (isMobile) return 'w-36 h-24';
+    if (isTablet) return 'w-36 h-24';
+    if (isDesktop) return 'w-72 h-48';
+    return 'w-36 h-24'; 
+  };
+
+  const getIconSize = () => {
+    if (isMobile) return 60;
+    if (isTablet) return 60;
+    if (isDesktop) return 110;
+    return 60; 
+  };
+  
   const { pageCache, cachePageData } = usePageCache();
 
   const [lookingForItemQuery, setLookingForItemQuery] = useState(
@@ -275,8 +297,8 @@ export default function Home(props) {
             </div>
           </>
         )}
-        <button className="fixed right-7 bottom-7 rounded-full w-16 h-16 bg-oncehuman-lightBlue bg-opacity-60 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
-          <FaPlus className="opacity-80" size={30} />
+        <button className={`fixed right-7 bottom-7 rounded-full bg-oncehuman-lightBlue bg-opacity-60 flex items-center justify-center hover:opacity-80 shadow-md shadow-black ${getButtonSize()}`}>
+          <FaPlus className="opacity-80" size={getIconSize()} />
         </button>
       </div>
     </main>
