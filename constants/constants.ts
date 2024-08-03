@@ -1,7 +1,7 @@
 export const SEO_METADATA = {
-  title: "Mayfly Market",
+  title: "Once Human Market",
   description:
-    "Mayfly.Market is the ultimate Once Human marketplace for trading any item, deviant, or service!",
+    "OnceHuman.Market is the ultimate marketplace for trading any item, deviant, or service!",
   image: null,
 };
 

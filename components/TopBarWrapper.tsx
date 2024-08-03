@@ -44,7 +44,7 @@ const TopbarWrapper = ({ children }) => {
         <div className="flex items-center justify-center">
           <Link href="/">
             <h6 className="sm:text-2xl text-xl font-bold text-oncehuman-lightBlue flex items-end">
-              Mayfly<span className="text-white">.</span>
+              OnceHuman<span className="text-white">.</span>
               <span className="text-oncehuman-lightRed">Market</span>
             </h6>
           </Link>

@@ -5,7 +5,7 @@ import { ClipLoader } from "react-spinners";
 import ListingCard from "@components/ListingCard";
 import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { usePageCache } from "@hooks/usePageCache";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 
 export default function Home(props) {
   const { pageCache, cachePageData } = usePageCache();
@@ -247,12 +247,23 @@ export default function Home(props) {
           />
           Remove listings older than 7 days
         </label> */}
-        <button
-          onClick={() => searchListings()}
-          className="py-2 px-7 bg-blue-500 text-white rounded mt-4"
-        >
-          Search
-        </button>
+        <div className="flex gap-4 flex-wrap justify-center items-center mt-4 px-4">
+          <button
+            onClick={() => searchListings()}
+            className="py-2 px-5 bg-blue-500 hover:bg-blue-700 justify-center items-center text-white flex gap-3 rounded"
+          >
+            <FaSearch size={18} />
+            Search
+          </button>
+          <button
+            onClick={() => searchListings()}
+            className="py-2 px-5 flex gap-3 justify-center items-center bg-rose-700 hover:bg-rose-900 text-white rounded"
+          >
+            <FaPlus size={18} />
+            Create Listing
+          </button>
+        </div>
+
         {fetchingListings ? (
           <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
         ) : (
@@ -275,9 +286,9 @@ export default function Home(props) {
             </div>
           </>
         )}
-        <button className="fixed lg:right-20 lg:bottom-10 right-7 bottom-7 rounded-full lg:w-[115px] lg:h-[64px] w-[88px] h-[46px] bg-oncehuman-lightRed bg-opacity-70 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
-          <FaPlus className="text-white lg:h-10 lg:w-10 h-7 w-7"/>
-        </button>
+        {/* <button className="fixed lg:right-20 lg:bottom-10 right-7 bottom-7 rounded-full lg:w-[115px] lg:h-[64px] w-[88px] h-[46px] bg-oncehuman-lightRed bg-opacity-70 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
+          <FaPlus className="text-white lg:h-10 lg:w-10 h-7 w-7" />
+        </button> */}
       </div>
     </main>
   );
