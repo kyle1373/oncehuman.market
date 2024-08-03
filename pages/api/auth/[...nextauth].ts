@@ -13,7 +13,6 @@ export default NextAuth({
   callbacks: {
     async session({ session, token, user }) {
       (session.user as any).id = token.id;
-
       return session;
     },
     async jwt({ token, user, account }) {
@@ -23,12 +22,9 @@ export default NextAuth({
       if (user) {
         token.id = user.id;
       }
-
       return token;
     },
-  },
-  events: {
-    async signIn({ user, account }) {
+    async signIn({ user }) {
       const discord_id = user.id;
       const discord_email = user.email;
       const discord_image = user.image;
@@ -91,8 +87,9 @@ export default NextAuth({
         }
       } catch (error) {
         console.error("Error in signIn event:", error);
-        throw new Error("Database update failed. Please try again later.");
+        throw new Error("Database update failed. Please try again later."); // Throwing an error to stop the sign-in process
       }
+      return true
     },
   },
 });

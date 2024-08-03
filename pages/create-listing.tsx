@@ -11,6 +11,7 @@ type PageProps = {
 };
 export default function Page({ session }: PageProps) {
 
+  // The top bar user doesn't get set after a successful log in for some reason, so we're manually setting the context here
   const {discordUser, setDiscordUser} = useUser()
 
   setDiscordUser(session)
