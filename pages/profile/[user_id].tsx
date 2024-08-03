@@ -1,7 +1,7 @@
 import ListingCard from "@components/ListingCard";
 import SEO from "@components/SEO";
 import { usePageCache } from "@hooks/usePageCache";
-import getOnlineStatus from "@utils/helpers";
+import { getOnlineStatus } from "@utils/helpers";
 import supabaseAdmin from "@utils/supabaseAdmin";
 import axios from "axios";
 import { GetServerSideProps } from "next";

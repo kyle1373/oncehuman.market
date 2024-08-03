@@ -6,6 +6,7 @@ import ListingCard from "@components/ListingCard";
 import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { usePageCache } from "@hooks/usePageCache";
 import { FaPlus, FaSearch } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Home(props) {
   const { pageCache, cachePageData } = usePageCache();
@@ -255,13 +256,13 @@ export default function Home(props) {
             <FaSearch size={18} />
             Search
           </button>
-          <button
-            onClick={() => searchListings()}
+          <Link
+            href={"/create-listing"}
             className="py-2 px-5 flex gap-3 justify-center items-center bg-rose-700 hover:bg-rose-900 text-white rounded"
           >
             <FaPlus size={18} />
             Create Listing
-          </button>
+          </Link>
         </div>
 
         {fetchingListings ? (

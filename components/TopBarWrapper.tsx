@@ -11,7 +11,7 @@ import { FaDiscord } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 
 const TopbarWrapper = ({ children }) => {
-  const { discordId, discordUsername, discordEmail, discordImage } = useUser(); // Destructure user data
+  const { discordUser } = useUser(); // Destructure user data
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -27,10 +27,10 @@ const TopbarWrapper = ({ children }) => {
 
   const handleSignOut = async () => {
     NProgress.start();
-    await signOut();
+    await signOut({ callbackUrl: '/' });
     NProgress.done();
   };
-
+  
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -59,10 +59,10 @@ const TopbarWrapper = ({ children }) => {
             <FaDiscord className="h-7 w-7" />
           </Link>
 
-          {!!discordId ? ( // Check if userId is available
+          {!!discordUser?.id ? ( // Check if userId is available
             <div className="relative" ref={dropdownRef}>
               <img
-                src={discordImage}
+                src={discordUser.image}
                 className="rounded-full border border-neutral-600 sm:h-9 sm:w-9 h-8 w-8 cursor-pointer"
                 onClick={handleDropdownClick}
               ></img>

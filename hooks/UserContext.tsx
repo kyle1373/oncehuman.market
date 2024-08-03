@@ -10,13 +10,13 @@ import { ClipLoader } from "react-spinners";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import styled from "@emotion/styled";
+import { UserData } from "@constants/types";
+import { convertSessionToUserData } from "@utils/helpers";
 
 // Define the shape of the context data
 interface UserContextProps {
-  discordId: string | null;
-  discordUsername: string | null;
-  discordEmail: string | null;
-  discordImage: string | null;
+  discordUser: UserData;
+  setDiscordUser;
   showLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -48,22 +48,26 @@ const LoadingOverlay = styled.div`
 
 // Create the UserProvider component
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [discordUser, setDiscordUser] = useState<UserData>({
+    name: null,
+    email: null,
+    id: null,
+    image: null,
+  });
   const { data: session } = useSession();
 
-  const [loading, showLoading] = useState<boolean>(false);
+  useEffect(() => {
+    const userData = convertSessionToUserData(session);
+    setDiscordUser(userData);
+  }, [session]);
 
-  const discordId = (session?.user as any)?.id ?? null;
-  const discordUsername = session?.user?.name ?? null;
-  const discordEmail = session?.user?.email ?? null;
-  const discordImage = session?.user?.image ?? null;
+  const [loading, showLoading] = useState<boolean>(false);
 
   return (
     <UserContext.Provider
       value={{
-        discordId,
-        discordUsername,
-        discordEmail,
-        discordImage,
+        discordUser,
+        setDiscordUser,
         showLoading,
       }}
     >

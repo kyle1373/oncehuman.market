@@ -2,20 +2,45 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { logServerStats } from "@utils/logger";
 import SEO from "@components/SEO";
 import Link from "next/link";
+import { getUserDataServer } from "@utils/server";
+import { UserData } from "@constants/types";
+import { useUser } from "@hooks/UserContext";
 
-export default function Home() {
+type PageProps = {
+  session: UserData;
+};
+export default function Page({ session }: PageProps) {
+
+  const {discordUser, setDiscordUser} = useUser()
+
+  setDiscordUser(session)
 
   return (
     <main>
-      <SEO title="Create Listing"/>
-      <Link href="/">
-      Home</Link>
+      <SEO title="Create Listing" />
+      {JSON.stringify(session)}
+      <Link href="/">Home</Link>
     </main>
   );
 }
 
-export const getServerSideProps = async ({ req, res }) => {
+export async function getServerSideProps({ req, res, query }) {
+  const session = await getUserDataServer(req);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/api/auth/signin?callbackUrl=${encodeURIComponent(
+          "/create-listing"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
   return {
-    props: {},
+    props: {
+      session,
+    },
   };
-};
+}

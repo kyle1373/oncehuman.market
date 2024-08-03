@@ -1,4 +1,6 @@
+import { UserData } from "@constants/types";
 import { formatDistanceToNow } from "date-fns";
+import { Session } from "next-auth";
 
 // Function to get online status based on the timestamp
 export const getOnlineStatus = (timestamp: string) => {
@@ -13,4 +15,18 @@ export const getOnlineStatus = (timestamp: string) => {
   }
 };
 
-export default getOnlineStatus;
+export const convertSessionToUserData = (session: Session): UserData => {
+  const discordId = (session?.user as any)?.id ?? null;
+  const discordUsername = session?.user?.name ?? null;
+  const discordEmail = session?.user?.email ?? null;
+  const discordImage = session?.user?.image ?? null;
+
+  const userData: UserData = {
+    name: discordUsername,
+    email: discordEmail,
+    image: discordImage,
+    id: discordId,
+  };
+
+  return userData;
+};

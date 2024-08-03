@@ -5,7 +5,7 @@ import { Tooltip } from "react-tooltip";
 import Modal from "react-modal";
 import { LINKS } from "@constants/constants";
 import "react-tooltip/dist/react-tooltip.css";
-import getOnlineStatus from "@utils/helpers";
+import { getOnlineStatus } from "@utils/helpers";
 import Link from "next/link";
 import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 import { useUser } from "@hooks/UserContext";
@@ -71,7 +71,7 @@ type ListingCardProps = {
 Modal.setAppElement("#__next"); // Required for accessibility
 
 const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
-  const { discordId, showLoading } = useUser(); // Destructure user data
+  const { discordUser, showLoading } = useUser(); // Destructure user data
 
   const { pageCache, cachePageData } = usePageCache();
   const [listingClosed, setListingClosed] = useState(
@@ -379,7 +379,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
           >
             Go Back
           </button> */}
-          {discordId === entry.user_info.discord_id && (
+          {discordUser?.id === entry.user_info.discord_id && (
             <button
               onClick={closeModal}
               className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
@@ -387,7 +387,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
               Edit Listing
             </button>
           )}
-          {discordId === entry.user_info.discord_id && (
+          {discordUser?.id === entry.user_info.discord_id && (
             <button
               onClick={toggleListingVisibility}
               className={`${
