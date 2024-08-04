@@ -164,14 +164,7 @@ export default async function handler(
     const errors = validateCreateListingBody(data);
 
     if (errors.length > 0) {
-      console.log(errors[0]);
-      return res.status(400).json({ error: errors[0] });
-    }
-
-    if (
-      !data.listing_id &&
-      (data.listing_id !== null || data.listing_id !== undefined)
-    ) {
+      console.log(errors)
       return res.status(400).json({ error: errors[0] });
     }
 
