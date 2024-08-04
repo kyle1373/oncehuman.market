@@ -13,7 +13,7 @@ const activateOnlineLogging = () => {
         console.log(currentTime - lastLoggedTime);
         if (
           !isFirstTime && (document.visibilityState !== "visible" ||
-          currentTime - lastLoggedTime < 50000)
+          currentTime - lastLoggedTime < 150000)
         ) {
           return;
         }
@@ -36,7 +36,7 @@ const activateOnlineLogging = () => {
 
     const intervalId = setInterval(() => {
       logStatus();
-    }, 60000); // 60000ms = 1 minute
+    }, 180000);
 
     // Log status immediately on mount
     logStatus();
