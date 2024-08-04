@@ -14,15 +14,23 @@ import { toast } from "react-toastify";
 import ServerSelection from "@components/ServerSelection";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { CreateListingBody } from "./api/create-listing";
+import { usePageCache } from "@hooks/usePageCache";
 
 type PageProps = {
   session: UserData;
+  selfUserID: number;
   previousListing: ListingData;
 };
 
-export default function Page({ session, previousListing }: PageProps) {
+export default function Page({
+  session,
+  previousListing,
+  selfUserID,
+}: PageProps) {
   // The top bar user doesn't get set after a successful log in for some reason, so we're manually setting the context here
-  const { discordUser, setDiscordUser } = useUser();
+  const { discordUser, setDiscordUser, showLoading } = useUser();
+
+  const { deleteEntireCacheData } = usePageCache();
 
   const [selectedAskingItems, setSelectedAskingItems] = useState<
     {
@@ -34,7 +42,13 @@ export default function Page({ session, previousListing }: PageProps) {
     }[]
   >([]);
   const [selectedOfferingItems, setSelectedOfferingItems] = useState<
-    { id: number; name: string; amount: number; image: string }[]
+    {
+      id: number;
+      name: string;
+      amount: number;
+      image: string;
+      total_stock: number;
+    }[]
   >([]);
 
   const [server, setServer] = useState<string>("");
@@ -70,6 +84,7 @@ export default function Page({ session, previousListing }: PageProps) {
         id: item.id,
         name: item.name,
         amount: 1,
+        total_stock: 1,
         image: LINKS.baseImagePath + item.s3_image_path,
       },
     ]);
@@ -141,6 +156,8 @@ export default function Page({ session, previousListing }: PageProps) {
   };
 
   const postListing = async () => {
+    showLoading(true);
+
     const body: CreateListingBody = {
       region,
       server,
@@ -154,10 +171,12 @@ export default function Page({ session, previousListing }: PageProps) {
       items_listings_sell: selectedOfferingItems.map((item) => ({
         item_id: item.id,
         amount: item.amount,
-        total_stock: item.amount,
+        total_stock: item.total_stock,
       })),
       do_not_contact_discord: doNotDiscordContact,
     };
+
+    console.log(body);
 
     try {
       const response = await fetch("/api/create-listing", {
@@ -171,11 +190,19 @@ export default function Page({ session, previousListing }: PageProps) {
       if (response.ok) {
         toast("Listing created successfully!");
       } else {
-        toast("Failed to create listing");
+        const responseJSON = await response.json();
+        console.log(responseJSON.error);
+        throw new Error(responseJSON.error);
       }
+
+      // If successful, clear browser cache and redirect to /profile/${selfUserID}
+
+      deleteEntireCacheData();
     } catch (error) {
-      console.error("Failed to post listing:", error);
-      toast("Failed to create listing");
+      console.error("Failed to post listing:", error.message);
+      toast(`Failed to create listing: ${error.message}`);
+    } finally {
+      showLoading(false);
     }
   };
 
@@ -210,7 +237,7 @@ export default function Page({ session, previousListing }: PageProps) {
         </div>
         <div className="w-full max-w-lg">
           <h1 className="mt-6 mb-1 text-neutral-300 text-lg">
-            I am looking for... (select up to 3)
+            I want 1 of the following... (select up to 3)
           </h1>
           <ItemSearchDropdown
             onItemSelect={handleLookingForItemSelect}
@@ -312,7 +339,7 @@ export default function Page({ session, previousListing }: PageProps) {
 
         <div className="mt-8 w-full max-w-lg">
           <h1 className="text-yellow-200 font-semibold text-center">
-            Please keep this website open to display an{" "}
+            Please keep the website open to display an{" "}
             <span className="font-black text-green-400">online</span> status
           </h1>
         </div>
@@ -369,6 +396,7 @@ export async function getServerSideProps({ req, res, query }) {
   return {
     props: {
       session: session,
+      selfUserID: user.id,
       previousListing: lastListing,
     },
   };

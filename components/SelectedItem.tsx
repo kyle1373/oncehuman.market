@@ -75,9 +75,9 @@ const SelectedItem: React.FC<ItemProps> = ({
 
   const handleTotalStockBlur = () => {
     if (totalStockValue === "") {
-      setTotalStockValue("0");
+      setTotalStockValue("1");
       if (onChangeTotalStock) {
-        onChangeTotalStock(0, entry.id);
+        onChangeTotalStock(1, entry.id);
       }
     }
   };

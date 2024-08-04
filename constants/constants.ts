@@ -17,3 +17,7 @@ export const LOCATIONS_LIST = [
   "Blackfell",
   "Greywater Camp",
 ];
+
+export const REGIONS_LIST = [
+  "NA"
+]
