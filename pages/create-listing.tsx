@@ -284,7 +284,7 @@ export default function Page({
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
+            className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full h-11"
           >
             {LOCATIONS_LIST.map((loc) => (
               <option key={loc} value={loc}>
