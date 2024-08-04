@@ -207,7 +207,7 @@ export default function Page({
       }
 
       deleteEntireCacheData();
-      router.replace(`/profile/${selfUserID}`);
+      router.push(`/profile/${selfUserID}`);
     } catch (error) {
       console.error("Failed to post listing:", error.message);
       toast(`Failed to create listing: ${error.message}`);
@@ -382,7 +382,13 @@ export async function getServerSideProps({ req, res, query }) {
     };
   }
 
-  const listings = await getListings({ userID: session.user_id, limit: 1 });
+  const listings = await getListings({
+    userID: session.user_id,
+    limit: 1,
+    onlyOpenedListings: false,
+  });
+
+  console.log(listings)
 
   const lastListing = listings?.length > 0 ? listings[0] : null;
 
