@@ -170,6 +170,7 @@ export default function Page({
     showLoading(true);
 
     const body: CreateListingBody = {
+      create_new: true,
       region,
       server,
       world,

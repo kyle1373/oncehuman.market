@@ -194,6 +194,7 @@ export default function Page({
     showLoading(true);
 
     const body: CreateListingBody = {
+      create_new: false,
       listing_id: listingID,
       region,
       server,

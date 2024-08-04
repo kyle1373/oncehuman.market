@@ -9,6 +9,7 @@ import supabaseAdmin from "@utils/supabaseAdmin";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type CreateListingBody = {
+  create_new: boolean;
   listing_id?: number;
   region: string;
   server: string;
@@ -30,11 +31,16 @@ export type CreateListingBody = {
 function validateCreateListingBody(data: CreateListingBody) {
   const errors = [];
 
-  if (data.listing_id && isNaN(parseInt(data.listing_id.toString()))) {
+  if (
+    !data.create_new &&
+    data.listing_id &&
+    isNaN(parseInt(data.listing_id.toString()))
+  ) {
     errors.push("Could not parse listing ID (Code 1)");
   }
 
   if (
+    !data.create_new &&
     !data.listing_id &&
     (data.listing_id !== null || data.listing_id !== undefined)
   ) {
@@ -169,7 +175,7 @@ export default async function handler(
       return res.status(400).json({ error: errors[0] });
     }
 
-    if (data.listing_id) {
+    if (!data.create_new) {
       const isCreator = await isUserListingCreator({
         listingID: data.listing_id,
         userID: session.user_id,
@@ -192,7 +198,7 @@ export default async function handler(
     }));
 
     await createOrUpdateListing({
-      listingID: data.listing_id,
+      listingID: data.create_new ? null : data.listing_id,
       region: data.region,
       server: data.server,
       world: data.world,
