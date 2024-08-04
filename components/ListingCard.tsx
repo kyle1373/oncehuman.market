@@ -11,59 +11,12 @@ import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 import { useUser } from "@hooks/UserContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { ListingData } from "@constants/types";
 
-type Listing = {
-  id: number;
-  region: string;
-  server: string;
-  created_at: string;
-  description: string;
-  world: string;
-  location: string;
-  can_discord_contact_when_offline: boolean;
-  is_closed: boolean;
-  oncehuman_username: string;
-};
 
-type UserInfo = {
-  id: number;
-  created_at: string;
-  discord_id: string;
-  last_online: string;
-  discord_name: string;
-  discord_image: string;
-};
-
-type ItemAsking = {
-  name: string;
-  amount: number;
-  item_id: number;
-  description: null;
-  category_name: string;
-  s3_image_path: string;
-  category_image_path: string;
-};
-
-type ItemSelling = {
-  name: string;
-  amount: number;
-  item_id: number;
-  description: null;
-  total_stock: number;
-  category_name: string;
-  s3_image_path: string;
-  category_image_path: string;
-};
-
-type ListingEntry = {
-  listing: Listing;
-  user_info: UserInfo;
-  items_asking: ItemAsking[];
-  items_selling: ItemSelling[];
-};
 
 type ListingCardProps = {
-  entry: ListingEntry;
+  entry: ListingData;
   className?: any;
   cacheKey: string;
 };
@@ -379,7 +332,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
           >
             Go Back
           </button> */}
-          {discordUser?.id === entry.user_info.discord_id && (
+          {discordUser?.discord_id === entry.user_info.discord_id && (
             <button
               onClick={closeModal}
               className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
@@ -387,7 +340,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
               Edit Listing
             </button>
           )}
-          {discordUser?.id === entry.user_info.discord_id && (
+          {discordUser?.discord_id === entry.user_info.discord_id && (
             <button
               onClick={toggleListingVisibility}
               className={`${

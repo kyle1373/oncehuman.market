@@ -29,7 +29,7 @@ export const getServerSideProps = async ({ req, res }) => {
     const { data, error } = await supabaseAdmin
       .from("users")
       .select("id")
-      .eq("discord_id", userData.id)
+      .eq("discord_id", userData.discord_id)
       .single();
 
     if (error || !data) {

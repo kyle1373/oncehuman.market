@@ -2,9 +2,10 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { logServerStats } from "@utils/logger";
 import SEO from "@components/SEO";
 import Link from "next/link";
-import { getUserDataServer } from "@utils/server";
+import { getListings, getUserDataServer } from "@utils/server";
 import { UserData } from "@constants/types";
 import { useUser } from "@hooks/UserContext";
+import supabaseAdmin from "@utils/supabaseAdmin";
 
 type PageProps = {
   session: UserData;
@@ -38,6 +39,11 @@ export async function getServerSideProps({ req, res, query }) {
       },
     };
   }
+
+  const user = await supabaseAdmin.from("users").select('id').eq('discord_id', session.discord_id)
+
+  const lastListing = await getListings({userID: session.discord_id})
+  // get last once human username, server, region,
 
   return {
     props: {

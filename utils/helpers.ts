@@ -22,10 +22,10 @@ export const convertSessionToUserData = (session: Session): UserData => {
   const discordImage = session?.user?.image ?? null;
 
   const userData: UserData = {
-    name: discordUsername,
-    email: discordEmail,
-    image: discordImage,
-    id: discordId,
+    discord_name: discordUsername,
+    discord_email: discordEmail,
+    discord_image: discordImage,
+    discord_id: discordId,
   };
 
   return userData;

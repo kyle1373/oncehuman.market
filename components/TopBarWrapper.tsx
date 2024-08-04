@@ -30,7 +30,7 @@ const TopbarWrapper = ({ children }) => {
     await signOut({ callbackUrl: '/' });
     NProgress.done();
   };
-  
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -59,10 +59,10 @@ const TopbarWrapper = ({ children }) => {
             <FaDiscord className="h-7 w-7" />
           </Link>
 
-          {!!discordUser?.id ? ( // Check if userId is available
+          {!!discordUser?.discord_id ? ( // Check if userId is available
             <div className="relative" ref={dropdownRef}>
               <img
-                src={discordUser.image}
+                src={discordUser.discord_image}
                 className="rounded-full border border-neutral-600 sm:h-9 sm:w-9 h-8 w-8 cursor-pointer"
                 onClick={handleDropdownClick}
               ></img>

@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/react";
 import supabaseAdmin from "./supabaseAdmin";
-import { UserData } from "@constants/types";
+import { ListingData, UserData } from "@constants/types";
 
 export const getUserDataServer = async (req): Promise<UserData> => {
   try {
@@ -10,7 +10,12 @@ export const getUserDataServer = async (req): Promise<UserData> => {
       return null;
     }
 
-    const userData: UserData = session.user as UserData;
+    const userData: UserData = {
+      discord_id: (session.user as any).id,
+      discord_email: session.user.email,
+      discord_image: session.user.email,
+      discord_name: session.user.name,
+    };
 
     return userData;
   } catch (e) {
@@ -32,15 +37,16 @@ export const logUserOnlineStatus = async (discordID) => {
 };
 
 export async function getListings({
-  region,
-  server,
+  region = null,
+  server = null,
   sellingItemID = null,
   askingItemID = null,
   filterOldListings = true,
   sortByRatio = true,
   userID = null,
   onlyOpenedListings = true,
-}) {
+  limit = 150,
+}): Promise<ListingData[]> {
   const { data, error } = await supabaseAdmin.rpc("get_listings", {
     p_asking_item_id: askingItemID,
     p_filter_old_listings: filterOldListings,
@@ -52,6 +58,7 @@ export async function getListings({
     p_sort_by_ratio: sortByRatio,
     p_user_id: userID,
     p_only_opened: onlyOpenedListings,
+    p_limit: limit,
   });
 
   if (error) {
@@ -75,7 +82,7 @@ export async function isUserListingCreator({
   discordID,
 }: {
   listingID: number;
-  discordID: number;
+  discordID: string;
 }) {
   const { data, error } = await supabaseAdmin
     .from("listings")

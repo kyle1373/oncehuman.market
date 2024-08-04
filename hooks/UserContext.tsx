@@ -49,10 +49,10 @@ const LoadingOverlay = styled.div`
 // Create the UserProvider component
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [discordUser, setDiscordUser] = useState<UserData>({
-    name: null,
-    email: null,
-    id: null,
-    image: null,
+    discord_name: null,
+    discord_email: null,
+    discord_id: null,
+    discord_image: null,
   });
   const { data: session } = useSession();
 

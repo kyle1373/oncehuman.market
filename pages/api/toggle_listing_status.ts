@@ -20,7 +20,7 @@ export default async function handler(
   console.log(listing_id);
 
   const isOwner = await isUserListingCreator({
-    discordID: userData.id,
+    discordID: userData.discord_id,
     listingID: parseInt(listing_id as string),
   });
 
