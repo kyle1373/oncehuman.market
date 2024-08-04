@@ -90,7 +90,7 @@ function validateCreateListingBody(data: CreateListingBody) {
         errors.push("Total stock amount is either too small or too big");
       }
       if (item.amount > item.total_stock) {
-        errors.push("The amount is greater than the total stock");
+        errors.push("The selling amount is greater than the total stock");
       }
     }
   }
