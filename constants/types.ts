@@ -5,7 +5,7 @@ export type UserData = {
   discord_id: string;
 };
 
-type Listing = {
+type ListingListingData = {
   id: number;
   created_at: string;
   description: string;
@@ -18,7 +18,7 @@ type Listing = {
   oncehuman_username: string;
 };
 
-type UserInfo = {
+type UserListingData = {
     id: number;
     created_at: string;
     discord_id: string;
@@ -27,7 +27,7 @@ type UserInfo = {
     last_online: string;
 }
 
-type Item = {
+export type ItemListingData = {
     item_id: number;
     total_stock?: number;
     amount: number;
@@ -39,9 +39,24 @@ type Item = {
 }
 
 export type ListingData = {
-    listing: Listing;
-    user_info: UserInfo;
-    items_selling: Item[];
-    items_asking: Item[];
+    listing: ListingListingData;
+    user_info: UserListingData;
+    items_selling: ItemListingData[];
+    items_asking: ItemListingData[];
     ratio?: number;
 }
+
+export type SearchItemsEntry = {
+    id: number;
+    created_at: string;
+    name: string;
+    description: string;
+    s3_image_path: string;
+    category_id: string;
+    categories: {
+      id: number;
+      name: string;
+      description: string;
+      s3_image_path: string;
+    }[];
+  };

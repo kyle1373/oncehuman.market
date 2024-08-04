@@ -15,8 +15,8 @@ type ItemSearchDropdownProps = {
 };
 
 const ItemSearchDropdown = ({
-  query = "",
-  setQuery = () => {},
+  query: externalQuery = "",
+  setQuery: externalSetQuery = undefined,
   onItemSelect = () => {},
   className = "",
   placeHolder = "Search items...",
@@ -24,6 +24,10 @@ const ItemSearchDropdown = ({
   keepSelected = true,
 }: ItemSearchDropdownProps) => {
   const { pageCache, cachePageData } = usePageCache();
+
+  const [internalQuery, setInternalQuery] = useState(externalQuery);
+  const query = externalSetQuery !== undefined ? externalQuery : internalQuery;
+  const setQuery = externalSetQuery !== undefined ? externalSetQuery : setInternalQuery;
 
   const [itemSearchResults, setItemSearchResults] = useState(
     pageCache(cacheKey, `itemSearchResults`) ?? []
@@ -139,6 +143,7 @@ const ItemSearchDropdown = ({
   };
 
   const handleItemClick = (item) => {
+    console.log("here")
     onItemSelect(item);
     if (keepSelected) {
       setQuery(item.name);
