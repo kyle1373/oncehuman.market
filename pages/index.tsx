@@ -157,7 +157,7 @@ export default function Home(props) {
             cacheKey="/root/lookingForItem"
           />
           <h1 className="text-xs text-neutral-300 mt-2">
-            Don't see an item?{" "}
+            {"Don't see an item? "}
             <Link
               className="underline hover:font-bold"
               target="_blank"
@@ -179,7 +179,7 @@ export default function Home(props) {
             cacheKey="/root/offeringItem"
           />
           <h1 className="text-xs text-neutral-300 mt-2">
-            Don't see an item?{" "}
+            {"Don't see an item? "}
             <Link
               className="underline hover:font-bold"
               target="_blank"
