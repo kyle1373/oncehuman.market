@@ -200,7 +200,7 @@ export default function Page({
       });
 
       if (response.ok) {
-        toast("Listing created successfully!");
+        toast("Listing created!");
       } else {
         const responseJSON = await response.json();
         console.log(responseJSON.error);

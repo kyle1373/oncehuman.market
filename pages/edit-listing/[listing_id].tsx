@@ -225,7 +225,7 @@ export default function Page({
       });
 
       if (response.ok) {
-        toast("Listing updated successfully!");
+        toast("Listing updated!");
       } else {
         const responseJSON = await response.json();
         console.log(responseJSON.error);
