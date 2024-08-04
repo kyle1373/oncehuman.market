@@ -15,6 +15,7 @@ import ServerSelection from "@components/ServerSelection";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { CreateListingBody } from "./api/create-listing";
 import { usePageCache } from "@hooks/usePageCache";
+import { useRouter } from "next/router";
 
 type PageProps = {
   session: UserData;
@@ -28,7 +29,9 @@ export default function Page({
   selfUserID,
 }: PageProps) {
   // The top bar user doesn't get set after a successful log in for some reason, so we're manually setting the context here
-  const { discordUser, setDiscordUser, showLoading } = useUser();
+  const { user: discordUser, setUser: setDiscordUser, showLoading } = useUser();
+
+  const router = useRouter();
 
   const { deleteEntireCacheData } = usePageCache();
 
@@ -51,12 +54,20 @@ export default function Page({
     }[]
   >([]);
 
-  const [server, setServer] = useState<string>("");
-  const [region, setRegion] = useState<string>("NA");
+  const [server, setServer] = useState<string>(
+    previousListing?.listing.server ?? ""
+  );
+  const [region, setRegion] = useState<string>(
+    previousListing?.listing.region ?? "NA"
+  );
 
-  const [world, setWorld] = useState<string>("");
+  const [world, setWorld] = useState<string>(
+    previousListing?.listing.world ?? ""
+  );
   const [location, setLocation] = useState<string>(LOCATIONS_LIST[0]);
-  const [oncehumanusername, setOncehumanusername] = useState<string>("");
+  const [oncehumanusername, setOncehumanusername] = useState<string>(
+    previousListing?.listing.oncehuman_username ?? ""
+  );
   const [doNotDiscordContact, setDoNotDiscordContact] = useState(false);
 
   setDiscordUser(session);
@@ -195,9 +206,8 @@ export default function Page({
         throw new Error(responseJSON.error);
       }
 
-      // If successful, clear browser cache and redirect to /profile/${selfUserID}
-
       deleteEntireCacheData();
+      router.replace(`/profile/${selfUserID}`);
     } catch (error) {
       console.error("Failed to post listing:", error.message);
       toast(`Failed to create listing: ${error.message}`);
@@ -372,31 +382,14 @@ export async function getServerSideProps({ req, res, query }) {
     };
   }
 
-  const { data: user, error: userError } = await supabaseAdmin
-    .from("users")
-    .select("id, discord_id, discord_image, discord_name")
-    .eq("discord_id", session.discord_id)
-    .maybeSingle();
-
-  if (userError) {
-    return {
-      redirect: {
-        destination: `/api/auth/signin?callbackUrl=${encodeURIComponent(
-          "/create-listing"
-        )}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const listings = await getListings({ userID: user.id, limit: 1 });
+  const listings = await getListings({ userID: session.user_id, limit: 1 });
 
   const lastListing = listings?.length > 0 ? listings[0] : null;
 
   return {
     props: {
       session: session,
-      selfUserID: user.id,
+      selfUserID: session.user_id,
       previousListing: lastListing,
     },
   };

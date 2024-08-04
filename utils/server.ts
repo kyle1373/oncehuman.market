@@ -7,6 +7,7 @@ export const NEXTAUTH_OPTIONS = {
   callbacks: {
     async session({ session, token }) {
       (session.user as any).id = token.id;
+      (session.user as any).user_id = token.user_id
       return session;
     },
     async jwt({ token, user, account }) {
@@ -15,6 +16,15 @@ export const NEXTAUTH_OPTIONS = {
       }
       if (user) {
         token.id = user.id;
+      }
+      if (!token.user_id) {
+        console.log("Pulling user_id token for", user.id);
+        const { data, error } = await supabaseAdmin
+          .from("users")
+          .select("id")
+          .eq("discord_id", user.id)
+          .maybeSingle();
+        token.user_id = data?.id;
       }
       return token;
     },
@@ -96,10 +106,11 @@ export const getUserDataServer = async (req, res): Promise<UserData> => {
     }
 
     const userData: UserData = {
-      discord_id: (session.user as any).id,
+      discord_id: session.user.id,
       discord_email: session.user.email,
       discord_image: session.user.image,
       discord_name: session.user.name,
+      user_id: session.user.user_id,
     };
 
     return userData;
@@ -108,13 +119,13 @@ export const getUserDataServer = async (req, res): Promise<UserData> => {
   }
 };
 
-export const logUserOnlineStatus = async (discordID) => {
+export const logUserOnlineStatus = async (userID) => {
   const { error } = await supabaseAdmin
     .from("users")
     .update({
       last_online: new Date(),
     })
-    .eq("discord_id", discordID);
+    .eq("id", userID);
 
   if (error) {
     throw new Error(error.message);
@@ -158,10 +169,10 @@ export async function getListings({
 
 export async function isUserListingCreator({
   listingID,
-  discordID,
+  userID,
 }: {
   listingID: number;
-  discordID: string;
+  userID: number;
 }) {
   const { data, error } = await supabaseAdmin
     .from("listings")
@@ -176,10 +187,9 @@ export async function isUserListingCreator({
   if (!data || !data.users) {
     return false;
   }
-  const listingDiscordID = (data.users as any).discord_id;
+  const listingUserID = (data.users as any).id;
 
-
-  return discordID === listingDiscordID;
+  return userID === listingUserID;
 }
 
 export async function updateListingStatus({ isClosed, listingID }) {
@@ -237,6 +247,6 @@ export async function createListing({
 
   if (error) {
     console.error("Error fetching listings:", error);
-    return null;
+    throw new Error(error.message);
   }
 }

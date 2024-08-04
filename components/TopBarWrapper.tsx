@@ -11,7 +11,7 @@ import { FaDiscord } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 
 const TopbarWrapper = ({ children }) => {
-  const { discordUser } = useUser(); // Destructure user data
+  const { user: discordUser } = useUser(); // Destructure user data
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -59,7 +59,7 @@ const TopbarWrapper = ({ children }) => {
             <FaDiscord className="h-7 w-7" />
           </Link>
 
-          {!!discordUser?.discord_id ? ( // Check if userId is available
+          {!!discordUser?.user_id ? ( // Check if userId is available
             <div className="relative" ref={dropdownRef}>
               <img
                 src={discordUser.discord_image}
@@ -71,7 +71,7 @@ const TopbarWrapper = ({ children }) => {
                   <ul>
                     <li>
                       <Link
-                        href="/my-profile"
+                        href={`/profile/${discordUser.user_id}`}
                         onClick={() => setDropdownOpen(false)}
                         className="block px-4 py-2 text-white hover:bg-neutral-500"
                       >

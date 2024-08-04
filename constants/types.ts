@@ -3,6 +3,7 @@ export type UserData = {
   discord_email: string;
   discord_image: string;
   discord_id: string;
+  user_id: number;
 };
 
 type ListingListingData = {

@@ -14,7 +14,7 @@ export default async function handler(
     return res.status(401).json({ error: "Unauthenticated" });
   }
 
-  await logUserOnlineStatus(userData.discord_id)
+  await logUserOnlineStatus(userData.user_id)
 
   return res.json({data: "User online status logged"});
 }

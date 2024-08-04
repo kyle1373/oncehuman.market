@@ -22,7 +22,7 @@ type ListingCardProps = {
 Modal.setAppElement("#__next"); // Required for accessibility
 
 const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
-  const { discordUser, showLoading } = useUser(); // Destructure user data
+  const { user, showLoading } = useUser(); // Destructure user data
 
   const { pageCache, cachePageData } = usePageCache();
   const [listingClosed, setListingClosed] = useState(
@@ -194,7 +194,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
                         </h1>
                       </div>
                       <h1 className="sm:text-xs text-[10px] mt-1 break-words text-center">
-                        {item.amount / sellingItem.amount}
+                        {(item.amount / sellingItem.amount).toFixed(2)}
                       </h1>
                       <h1 className="text-[10px] break-words text-center">
                         each
@@ -332,7 +332,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
           >
             Go Back
           </button> */}
-          {discordUser?.discord_id === entry.user_info.discord_id && (
+          {user?.user_id === entry.user_info.id && (
             <Link
               className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
               href={`/edit-listing/${entry.listing.id}`}
@@ -340,7 +340,7 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
               Edit Listing
             </Link>
           )}
-          {discordUser?.discord_id === entry.user_info.discord_id && (
+          {user?.user_id === entry.user_info.id && (
             <button
               onClick={toggleListingVisibility}
               className={`${

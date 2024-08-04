@@ -15,8 +15,8 @@ import { convertSessionToUserData } from "@utils/helpers";
 
 // Define the shape of the context data
 interface UserContextProps {
-  discordUser: UserData;
-  setDiscordUser;
+  user: UserData;
+  setUser;
   showLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -53,6 +53,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     discord_email: null,
     discord_id: null,
     discord_image: null,
+    user_id: null,
   });
   const { data: session } = useSession();
 
@@ -66,8 +67,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserContext.Provider
       value={{
-        discordUser,
-        setDiscordUser,
+        user: discordUser,
+        setUser: setDiscordUser,
         showLoading,
       }}
     >

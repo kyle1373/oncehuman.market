@@ -1,5 +1,3 @@
-// pages/api/receive-request.js
-
 import { LOCATIONS_LIST, REGIONS_LIST } from "@constants/constants";
 import { isOnceHumanServerFormatted } from "@utils/helpers";
 import { createListing, getUserDataServer } from "@utils/server";
@@ -124,6 +122,7 @@ function validateCreateListingBody(data: CreateListingBody) {
 
   return errors;
 }
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -148,15 +147,19 @@ export default async function handler(
       return res.status(400).json({ error: errors[0] });
     }
 
-    const { data: userPulled, error } = await supabaseAdmin
-      .from("users")
-      .select("id")
-      .eq("discord_id", session.discord_id)
-      .maybeSingle();
+    // Convert relevant fields to integers
+    const itemsListingsAsk = data.items_listings_ask.map((item) => ({
+      item_id: parseInt(item.item_id.toString(), 10),
+      amount: parseInt(item.amount.toString(), 10),
+    }));
 
-    if (!data || error) {
-      throw new Error(error.message || "User does not exist");
-    }
+    const itemsListingsSell = data.items_listings_sell.map((item) => ({
+      item_id: parseInt(item.item_id.toString(), 10),
+      amount: parseInt(item.amount.toString(), 10),
+      total_stock: parseInt(item.total_stock.toString(), 10),
+    }));
+
+    console.log(itemsListingsAsk);
 
     await createListing({
       region: data.region,
@@ -164,10 +167,10 @@ export default async function handler(
       world: data.world,
       location: data.location,
       onceHumanUsername: data.oncehuman_username,
-      itemsListingsAsk: data.items_listings_ask,
-      itemsListingsSell: data.items_listings_sell,
+      itemsListingsAsk: itemsListingsAsk,
+      itemsListingsSell: itemsListingsSell,
       doNotContactDiscord: data.do_not_contact_discord,
-      userID: userPulled.id,
+      userID: session.user_id,
     });
 
     // Proceed with handling the valid request

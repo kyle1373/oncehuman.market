@@ -20,12 +20,14 @@ export const convertSessionToUserData = (session: Session): UserData => {
   const discordUsername = session?.user?.name ?? null;
   const discordEmail = session?.user?.email ?? null;
   const discordImage = session?.user?.image ?? null;
+  const userID = (session?.user as any)?.user_id ?? null;
 
   const userData: UserData = {
     discord_name: discordUsername,
     discord_email: discordEmail,
     discord_image: discordImage,
     discord_id: discordId,
+    user_id: userID,
   };
 
   return userData;
@@ -38,7 +40,7 @@ export const isOnceHumanServerFormatted = (server: string) => {
     return false;
   }
 
-  console.log(parts[0].length)
+  console.log(parts[0].length);
 
   return parts[0].length === 5 && parts[1].length === 5;
 };
