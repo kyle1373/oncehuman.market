@@ -9,6 +9,7 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import Link from "next/link";
 import ServerSelection from "@components/ServerSelection"; // Import the new component
 import { isOnceHumanServerFormatted } from "@utils/helpers";
+import { LINKS } from "@constants/constants";
 
 export default function Home(props) {
   const { pageCache, cachePageData } = usePageCache();
@@ -155,6 +156,17 @@ export default function Home(props) {
             onItemSelect={handleLookingForItemSelect}
             cacheKey="/root/lookingForItem"
           />
+          <h1 className="text-xs text-neutral-300 mt-2">
+            Don't see an item?{" "}
+            <Link
+              className="underline hover:font-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={LINKS.discord}
+            >
+              Let us know on Discord!
+            </Link>
+          </h1>
         </div>
         <div className="w-full max-w-lg px-4">
           <h1 className="mt-6 mb-1 text-neutral-300 text-lg">
@@ -166,7 +178,19 @@ export default function Home(props) {
             onItemSelect={handleOfferingItemSelect}
             cacheKey="/root/offeringItem"
           />
+          <h1 className="text-xs text-neutral-300 mt-2">
+            Don't see an item?{" "}
+            <Link
+              className="underline hover:font-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={LINKS.discord}
+            >
+              Let us know on Discord!
+            </Link>
+          </h1>
         </div>
+
         <label className="text-neutral-300 mt-4 mb-2">
           <input
             type="checkbox"

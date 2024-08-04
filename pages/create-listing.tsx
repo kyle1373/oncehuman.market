@@ -233,6 +233,17 @@ export default function Page({
             cacheKey="/create-item/lookingForItem"
             keepSelected={false}
           />
+          <h1 className="text-xs text-neutral-300 mt-2">
+            Don't see an item?{" "}
+            <Link
+              className="underline hover:font-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={LINKS.discord}
+            >
+              Let us know on Discord!
+            </Link>
+          </h1>
           <div className="gap-4">
             {selectedOfferingItems.map((entry) => (
               <SelectedItem
@@ -255,6 +266,17 @@ export default function Page({
             cacheKey="/create-item/offeringItem"
             keepSelected={false}
           />
+          <h1 className="text-xs text-neutral-300 mt-2">
+            Don't see an item?{" "}
+            <Link
+              className="underline hover:font-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={LINKS.discord}
+            >
+              Let us know on Discord!
+            </Link>
+          </h1>
           <div className="">
             {selectedAskingItems.map((entry, index) => (
               <SelectedItem
@@ -389,7 +411,7 @@ export async function getServerSideProps({ req, res, query }) {
     onlyOpenedListings: false,
   });
 
-  console.log(listings)
+  console.log(listings);
 
   const lastListing = listings?.length > 0 ? listings[0] : null;
 
