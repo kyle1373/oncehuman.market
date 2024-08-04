@@ -1,10 +1,15 @@
 import { LOCATIONS_LIST, REGIONS_LIST } from "@constants/constants";
 import { isOnceHumanServerFormatted } from "@utils/helpers";
-import { createListing, getUserDataServer } from "@utils/server";
+import {
+  createOrUpdateListing,
+  getUserDataServer,
+  isUserListingCreator,
+} from "@utils/server";
 import supabaseAdmin from "@utils/supabaseAdmin";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type CreateListingBody = {
+  listing_id?: number;
   region: string;
   server: string;
   world: string;
@@ -25,6 +30,16 @@ export type CreateListingBody = {
 function validateCreateListingBody(data: CreateListingBody) {
   const errors = [];
 
+  if (data.listing_id && isNaN(parseInt(data.listing_id.toString()))) {
+    errors.push("Could not parse listing ID (Code 1)");
+  }
+
+  if (
+    !data.listing_id &&
+    (data.listing_id !== null || data.listing_id !== undefined)
+  ) {
+    errors.push("Could not parse listing ID (Code 2)");
+  }
   // Validate items_listings_ask
   if (
     !Array.isArray(data.items_listings_ask) ||
@@ -147,6 +162,23 @@ export default async function handler(
       return res.status(400).json({ error: errors[0] });
     }
 
+    if (
+      !data.listing_id &&
+      (data.listing_id !== null || data.listing_id !== undefined)
+    ) {
+      return res.status(400).json({ error: errors[0] });
+    }
+
+    if (data.listing_id) {
+      const isCreator = await isUserListingCreator({
+        listingID: data.listing_id,
+        userID: session.user_id,
+      });
+      if (!isCreator) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+    }
+
     // Convert relevant fields to integers
     const itemsListingsAsk = data.items_listings_ask.map((item) => ({
       item_id: parseInt(item.item_id.toString(), 10),
@@ -159,9 +191,8 @@ export default async function handler(
       total_stock: parseInt(item.total_stock.toString(), 10),
     }));
 
-    console.log(itemsListingsAsk);
-
-    await createListing({
+    await createOrUpdateListing({
+      listingID: data.listing_id,
       region: data.region,
       server: data.server,
       world: data.world,

@@ -14,7 +14,7 @@ type ListingListingData = {
   server: string;
   world: string;
   location: string;
-  do_not_contact_discord: string;
+  do_not_contact_discord: boolean;
   is_closed: boolean;
   oncehuman_username: string;
 };

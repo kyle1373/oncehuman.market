@@ -205,7 +205,9 @@ export async function updateListingStatus({ isClosed, listingID }) {
   }
 }
 
-export async function createListing({
+
+export async function createOrUpdateListing({
+  listingID,
   region,
   server,
   world,
@@ -216,6 +218,7 @@ export async function createListing({
   doNotContactDiscord,
   userID,
 }: {
+  listingID?: number; // Optional for create, required for update
   region: string;
   server: string;
   world: string;
@@ -233,7 +236,8 @@ export async function createListing({
   doNotContactDiscord: boolean;
   userID: number;
 }) {
-  const { error } = await supabaseAdmin.rpc("create_listing", {
+  const { error } = await supabaseAdmin.rpc("create_or_update_listing", {
+    p_listing_id: listingID || null,
     p_region: region,
     p_server: server,
     p_world: world,
@@ -246,7 +250,7 @@ export async function createListing({
   });
 
   if (error) {
-    console.error("Error fetching listings:", error);
+    console.error("Error creating or updating listing:", error);
     throw new Error(error.message);
   }
 }

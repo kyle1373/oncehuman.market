@@ -13,7 +13,7 @@ import SelectedItem from "@components/SelectedItem";
 import { toast } from "react-toastify";
 import ServerSelection from "@components/ServerSelection";
 import { FaArrowDownLong } from "react-icons/fa6";
-import { CreateListingBody } from "./api/create-listing";
+import { CreateListingBody } from "./api/create-or-update-listing";
 import { usePageCache } from "@hooks/usePageCache";
 import { useRouter } from "next/router";
 
