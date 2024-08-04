@@ -104,7 +104,7 @@ function validateCreateListingBody(data: CreateListingBody) {
 
   // Validate server
   if (!data.server) {
-    errors.push("Server is missing");
+    errors.push("Server is invalid");
   } else if (
     typeof data.server !== "string" ||
     !isOnceHumanServerFormatted(data.server)
