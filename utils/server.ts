@@ -13,7 +13,7 @@ export const getUserDataServer = async (req): Promise<UserData> => {
     const userData: UserData = {
       discord_id: (session.user as any).id,
       discord_email: session.user.email,
-      discord_image: session.user.email,
+      discord_image: session.user.image,
       discord_name: session.user.name,
     };
 
@@ -44,6 +44,7 @@ export async function getListings({
   filterOldListings = true,
   sortByRatio = true,
   userID = null,
+  listingID = null,
   onlyOpenedListings = true,
   limit = 150,
 }): Promise<ListingData[]> {
@@ -59,6 +60,7 @@ export async function getListings({
     p_user_id: userID,
     p_only_opened: onlyOpenedListings,
     p_limit: limit,
+    p_listing_id: listingID,
   });
 
   if (error) {

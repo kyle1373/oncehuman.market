@@ -13,8 +13,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ListingData } from "@constants/types";
 
-
-
 type ListingCardProps = {
   entry: ListingData;
   className?: any;
@@ -333,12 +331,12 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
             Go Back
           </button> */}
           {discordUser?.discord_id === entry.user_info.discord_id && (
-            <button
-              onClick={closeModal}
+            <Link
               className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded mt-4 sm:text-base text-xs"
+              href={`/edit-listing/${entry.listing.id}`}
             >
               Edit Listing
-            </button>
+            </Link>
           )}
           {discordUser?.discord_id === entry.user_info.discord_id && (
             <button
