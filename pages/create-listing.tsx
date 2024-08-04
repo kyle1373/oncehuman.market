@@ -10,6 +10,7 @@ import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { useState } from "react";
 import { LINKS } from "@constants/constants";
 import SelectedItem from "@components/SelectedItem";
+import { toast } from "react-toastify";
 
 type PageProps = {
   session: UserData;
@@ -30,39 +31,59 @@ export default function Page({ session, previousListing }: PageProps) {
   setDiscordUser(session);
 
   const handleOfferingItemSelect = (item: SearchItemsEntry) => {
-    console.log("offering" + JSON.stringify(item));
     if (!item) {
       return;
     }
-    setSelectedOfferingItems((prevState) => {
-      prevState.push({
-        id: item?.id,
-        name: item?.name,
+
+    if (selectedOfferingItems.length >= 1) {
+      toast("You can only select 1 item");
+      return;
+    }
+
+    if (
+      selectedOfferingItems.some((selectedItem) => selectedItem.id === item.id)
+    ) {
+      toast("This item is already selected");
+      return;
+    }
+
+    setSelectedOfferingItems((prevState) => [
+      ...prevState,
+      {
+        id: item.id,
+        name: item.name,
         amount: 1,
         image: LINKS.baseImagePath + item.s3_image_path,
-      });
-
-      return prevState;
-    });
+      },
+    ]);
   };
 
   const handleLookingForItemSelect = (item: SearchItemsEntry) => {
     if (!item) {
       return;
     }
-    setSelectedAskingItems((prevState) => {
-      if (prevState.length > 2) {
-        return prevState;
-      }
-      prevState.push({
+
+    if (selectedAskingItems.length >= 3) {
+      toast("You can only select up to 3 items");
+      return;
+    }
+
+    if (
+      selectedAskingItems.some((selectedItem) => selectedItem.id === item.id)
+    ) {
+      toast("This item is already selected");
+      return;
+    }
+
+    setSelectedAskingItems((prevState) => [
+      ...prevState,
+      {
         id: item.id,
         name: item.name,
         amount: 1,
         image: LINKS.baseImagePath + item.s3_image_path,
-      });
-
-      return prevState;
-    });
+      },
+    ]);
   };
 
   const removeOfferingItem = (item_id: number) => {
@@ -78,11 +99,20 @@ export default function Page({ session, previousListing }: PageProps) {
   };
 
   const onChangeOfferingItemAmount = (numItems, itemID) => {
-    console.log(numItems);
-    console.log(itemID);
+    setSelectedOfferingItems((prevState) =>
+      prevState.map((item) =>
+        item.id === itemID ? { ...item, amount: numItems } : item
+      )
+    );
   };
 
-  const onChangeAskingItemAmount = (numItems, itemID) => {};
+  const onChangeAskingItemAmount = (numItems, itemID) => {
+    setSelectedAskingItems((prevState) =>
+      prevState.map((item) =>
+        item.id === itemID ? { ...item, amount: numItems } : item
+      )
+    );
+  };
 
   return (
     <main className="h-full w-full overflow-y-auto">
@@ -97,17 +127,16 @@ export default function Page({ session, previousListing }: PageProps) {
             cacheKey="/create-item/lookingForItem"
             keepSelected={false}
           />
-          <div className="mt-4">
-            {selectedOfferingItems.map((entry, index) => {
-              return (
-                <SelectedItem
-                  key={"offering" + entry.id}
-                  entry={entry}
-                  onChangeAmount={onChangeOfferingItemAmount}
-                  onClickX={removeOfferingItem}
-                />
-              );
-            })}
+          <div className="mt-4 gap-4">
+            {selectedOfferingItems.map((entry) => (
+              <SelectedItem
+                key={"offering" + entry.id}
+                className="mt-4"
+                entry={entry}
+                onChangeAmount={onChangeOfferingItemAmount}
+                onClickX={removeOfferingItem}
+              />
+            ))}
           </div>
         </div>
         <div className="w-full max-w-lg px-4">
@@ -119,6 +148,17 @@ export default function Page({ session, previousListing }: PageProps) {
             cacheKey="/create-item/offeringItem"
             keepSelected={false}
           />
+          <div className="mt-4">
+            {selectedAskingItems.map((entry, index) => (
+              <SelectedItem
+                key={"asking" + entry.id}
+                className="mt-4"
+                entry={entry}
+                onChangeAmount={onChangeAskingItemAmount}
+                onClickX={removeAskingItem}
+              />
+            ))}
+          </div>
         </div>
         <h1>INFORMATION</h1>
         <h1>Region, Server</h1>
