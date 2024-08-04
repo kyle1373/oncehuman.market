@@ -71,14 +71,6 @@ export async function getListings({
   return data;
 }
 
-export async function updateListing({
-  listingID,
-}: {
-  listingID: number;
-  sellingItemIDs: number[];
-  askingItemIDs: number[];
-}) {}
-
 export async function isUserListingCreator({
   listingID,
   discordID,
@@ -118,5 +110,51 @@ export async function updateListingStatus({ isClosed, listingID }) {
 
   if (error) {
     throw new Error(error.message);
+  }
+}
+
+export async function createListing({
+  region,
+  server,
+  world,
+  location,
+  onceHumanUsername,
+  itemsListingsAsk,
+  itemsListingsSell,
+  doNotContactDiscord,
+  userID,
+}: {
+  region: string;
+  server: string;
+  world: string;
+  location: string;
+  onceHumanUsername: string;
+  itemsListingsAsk: {
+    item_id: number;
+    amount: number;
+  }[];
+  itemsListingsSell: {
+    item_id: number;
+    amount: number;
+    total_stock: number;
+  }[];
+  doNotContactDiscord: boolean;
+  userID: number;
+}) {
+  const { error } = await supabaseAdmin.rpc("create_listing", {
+    p_region: region,
+    p_server: server,
+    p_world: world,
+    p_location: location,
+    p_oncehuman_username: onceHumanUsername,
+    p_items_listings_ask: itemsListingsAsk,
+    p_items_listings_sell: itemsListingsSell,
+    p_do_not_contact_discord: doNotContactDiscord,
+    p_user_id: userID,
+  });
+
+  if (error) {
+    console.error("Error fetching listings:", error);
+    return null;
   }
 }
