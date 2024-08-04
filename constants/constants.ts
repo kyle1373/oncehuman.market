@@ -6,6 +6,14 @@ export const SEO_METADATA = {
 };
 
 export const LINKS = {
-  baseImagePath: "https://uwekgclrweeafrminfgh.supabase.co/storage/v1/object/public/images",
-  discord: "https://discord.gg/KxgSEwXATV"
-}
+  baseImagePath:
+    "https://uwekgclrweeafrminfgh.supabase.co/storage/v1/object/public/images",
+  discord: "https://discord.gg/KxgSEwXATV",
+};
+
+export const LOCATIONS_LIST = [
+  "Meyer's Market",
+  "Tall Grass Inn",
+  "Blackfell",
+  "Greywater Camp",
+];

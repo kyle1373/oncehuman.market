@@ -8,11 +8,12 @@ import { useUser } from "@hooks/UserContext";
 import supabaseAdmin from "@utils/supabaseAdmin";
 import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { useState } from "react";
-import { LINKS } from "@constants/constants";
+import { LINKS, LOCATIONS_LIST } from "@constants/constants";
 import SelectedItem from "@components/SelectedItem";
 import { toast } from "react-toastify";
 import ServerSelection from "@components/ServerSelection";
 import { FaArrowDownLong } from "react-icons/fa6";
+import { CreateListingBody } from "./api/create-listing";
 
 type PageProps = {
   session: UserData;
@@ -24,7 +25,13 @@ export default function Page({ session, previousListing }: PageProps) {
   const { discordUser, setDiscordUser } = useUser();
 
   const [selectedAskingItems, setSelectedAskingItems] = useState<
-    { id: number; name: string; amount: number; image: string }[]
+    {
+      id: number;
+      name: string;
+      amount: number;
+      total_stock: number;
+      image: string;
+    }[]
   >([]);
   const [selectedOfferingItems, setSelectedOfferingItems] = useState<
     { id: number; name: string; amount: number; image: string }[]
@@ -34,8 +41,9 @@ export default function Page({ session, previousListing }: PageProps) {
   const [region, setRegion] = useState<string>("NA");
 
   const [world, setWorld] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+  const [location, setLocation] = useState<string>(LOCATIONS_LIST[0]);
   const [oncehumanusername, setOncehumanusername] = useState<string>("");
+  const [doNotDiscordContact, setDoNotDiscordContact] = useState(false);
 
   setDiscordUser(session);
 
@@ -90,6 +98,7 @@ export default function Page({ session, previousListing }: PageProps) {
         id: item.id,
         name: item.name,
         amount: 1,
+        total_stock: 1,
         image: LINKS.baseImagePath + item.s3_image_path,
       },
     ]);
@@ -115,6 +124,14 @@ export default function Page({ session, previousListing }: PageProps) {
     );
   };
 
+  const onChangeOfferingItemTotalStock = (totalStock, itemID) => {
+    setSelectedOfferingItems((prevState) =>
+      prevState.map((item) =>
+        item.id === itemID ? { ...item, total_stock: totalStock } : item
+      )
+    );
+  };
+
   const onChangeAskingItemAmount = (numItems, itemID) => {
     setSelectedAskingItems((prevState) =>
       prevState.map((item) =>
@@ -123,7 +140,44 @@ export default function Page({ session, previousListing }: PageProps) {
     );
   };
 
-  const postListing = async () => {};
+  const postListing = async () => {
+    const body: CreateListingBody = {
+      region,
+      server,
+      world,
+      location,
+      oncehuman_username: oncehumanusername,
+      items_listings_ask: selectedAskingItems.map((item) => ({
+        item_id: item.id,
+        amount: item.amount,
+      })),
+      items_listings_sell: selectedOfferingItems.map((item) => ({
+        item_id: item.id,
+        amount: item.amount,
+        total_stock: item.amount,
+      })),
+      do_not_contact_discord: doNotDiscordContact,
+    };
+
+    try {
+      const response = await fetch("/api/create-listing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        toast("Listing created successfully!");
+      } else {
+        toast("Failed to create listing");
+      }
+    } catch (error) {
+      console.error("Failed to post listing:", error);
+      toast("Failed to create listing");
+    }
+  };
 
   return (
     <main className="h-full w-full overflow-y-auto">
@@ -148,6 +202,7 @@ export default function Page({ session, previousListing }: PageProps) {
                 className="mt-4"
                 entry={entry}
                 onChangeAmount={onChangeOfferingItemAmount}
+                onChangeTotalStock={onChangeOfferingItemTotalStock}
                 onClickX={removeOfferingItem}
               />
             ))}
@@ -199,15 +254,17 @@ export default function Page({ session, previousListing }: PageProps) {
         </div>
         <div className={`relative w-full max-w-lg mt-6`}>
           <h1 className="mb-1 text-neutral-300 text-lg">Location</h1>
-          <input
-            type="text"
+          <select
             value={location}
-            onChange={(e) => {
-              setLocation(e.target.value);
-            }}
-            placeholder={"Your location in your world"}
+            onChange={(e) => setLocation(e.target.value)}
             className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
-          />
+          >
+            {LOCATIONS_LIST.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className={`relative w-full max-w-lg mt-6`}>
@@ -224,7 +281,7 @@ export default function Page({ session, previousListing }: PageProps) {
         </div>
 
         <div className="mt-6 w-full max-w-lg">
-          <h1 className="text-white">
+          <h1 className="text-white mb-6">
             Your discord username,{" "}
             <span className="text-purple-300 font-bold">
               {session.discord_name}
@@ -238,6 +295,15 @@ export default function Page({ session, previousListing }: PageProps) {
             </span>
             .
           </h1>
+          <label className="text-neutral-300">
+            <input
+              type="checkbox"
+              checked={doNotDiscordContact}
+              onChange={() => setDoNotDiscordContact((prevState) => !prevState)}
+              className="mr-1"
+            />
+            Do not message me on Discord
+          </label>
         </div>
 
         <div className="w-full flex justify-center items-center mt-8">

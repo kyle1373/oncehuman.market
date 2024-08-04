@@ -284,12 +284,14 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
                   {entry.listing.oncehuman_username}
                 </span>
               </p>
-              <p>
-                Discord:{" "}
-                <span className="text-blue-300 font-bold">
-                  {entry.user_info.discord_name}
-                </span>
-              </p>
+              {!entry.listing.do_not_contact_discord && (
+                <p>
+                  Discord:{" "}
+                  <span className="text-blue-300 font-bold">
+                    {entry.user_info.discord_name}
+                  </span>
+                </p>
+              )}
               <p>Status:{" " + getOnlineStatus(entry.user_info.last_online)}</p>
             </div>
             {entry.listing.description && (
@@ -352,8 +354,11 @@ const ListingCard = ({ entry, cacheKey }: ListingCardProps) => {
           )}
         </div>
         <h1 className="text-center text-gray-300 text-lg px-4 pt-2 pb-3 font-bold">
-          To contact the seller, add {entry.listing.oncehuman_username} as a
-          friend ingame or message {entry.user_info.discord_name} on Discord
+          {entry.listing.do_not_contact_discord
+            ? `To contact the seller, add ${entry.listing.oncehuman_username} as a
+          friend ingame`
+            : `To contact the seller, add ${entry.listing.oncehuman_username} as a
+          friend ingame or message ${entry.user_info.discord_name} on Discord`}
         </h1>
       </Modal>
     </>

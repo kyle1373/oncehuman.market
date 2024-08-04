@@ -2,12 +2,12 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 
-type ListingBody = {
+export type CreateListingBody = {
   description?: string;
-  region: "NA";
+  region: string; // Enforce that it's only NA
   server: string;
   world: string;
-  location: string;
+  location: string; // Enforce that it's an approved location in the array
   oncehuman_username: string;
   items_listings_ask: {
     item_id: number;
@@ -17,7 +17,8 @@ type ListingBody = {
     item_id: number;
     amount: number;
     total_stock: number;
-  };
+  }[];
+  do_not_contact_discord: boolean;
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
