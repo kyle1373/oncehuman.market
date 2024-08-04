@@ -190,7 +190,7 @@ export default function Page({
     console.log(body);
 
     try {
-      const response = await fetch("/api/create-listing", {
+      const response = await fetch("/api/create-or-update-listing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
