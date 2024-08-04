@@ -5,21 +5,23 @@ import { LINKS } from "@constants/constants";
 import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
 
 type ItemSearchDropdownProps = {
-  query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
-  onItemSelect: (item: any) => void;
+  query?: string;
+  setQuery?: Dispatch<SetStateAction<string>>;
+  onItemSelect?: (item: any) => void;
   placeHolder?: string;
   className?: string;
   cacheKey: string;
+  keepSelected?: boolean;
 };
 
 const ItemSearchDropdown = ({
-  query,
-  setQuery,
-  onItemSelect,
+  query = "",
+  setQuery = () => {},
+  onItemSelect = () => {},
   className = "",
   placeHolder = "Search items...",
   cacheKey,
+  keepSelected = true,
 }: ItemSearchDropdownProps) => {
   const { pageCache, cachePageData } = usePageCache();
 
@@ -49,7 +51,9 @@ const ItemSearchDropdown = ({
       setItemSearchResults([]);
       setShowModal(false);
       setItemSearchMessage("Items will appear here.");
-      setSelectedItem(null);
+      if (keepSelected) {
+        setSelectedItem(null);
+      }
       onItemSelect(null);
     } else if (cachedResults) {
       setItemSearchResults(cachedResults);
@@ -78,7 +82,9 @@ const ItemSearchDropdown = ({
     cachePageData(cacheKey, `itemSearchMessage`, itemSearchMessage);
     cachePageData(cacheKey, `showModal`, showModal);
     cachePageData(cacheKey, `modalActive`, modalActive);
-    cachePageData(cacheKey, `selectedItem`, selectedItem);
+    if (keepSelected) {
+      cachePageData(cacheKey, `selectedItem`, selectedItem);
+    }
     if (query) {
       cachePageData(cacheKey, `${query}`, itemSearchResults);
     }
@@ -134,8 +140,12 @@ const ItemSearchDropdown = ({
 
   const handleItemClick = (item) => {
     onItemSelect(item);
-    setQuery(item.name);
-    setSelectedItem(item);
+    if (keepSelected) {
+      setQuery(item.name);
+      setSelectedItem(item);
+    } else {
+      setQuery("");
+    }
     setModalActive(false); // Prevent the modal from showing again
     setShowModal(false); // Close the modal when an item is selected
   };

@@ -7,6 +7,8 @@ import ItemSearchDropdown from "@components/ItemSearchDropdown";
 import { usePageCache } from "@hooks/usePageCache";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import Link from "next/link";
+import ServerSelection from "@components/ServerSelection"; // Import the new component
+import { isOnceHumanServerFormatted } from "@utils/helpers";
 
 export default function Home(props) {
   const { pageCache, cachePageData } = usePageCache();
@@ -32,13 +34,7 @@ export default function Home(props) {
     pageCache("/", "selectedOfferingItem") ?? null
   );
 
-  const [mode, setMode] = useState(pageCache("/", "mode") ?? "PVE");
-  const [twoDigitNumber, setTwoDigitNumber] = useState(
-    pageCache("/", "twoDigitNumber") ?? ""
-  );
-  const [fiveDigitNumber, setFiveDigitNumber] = useState(
-    pageCache("/", "fiveDigitNumber") ?? ""
-  );
+  const [server, setServer] = useState(pageCache("/", "server") ?? null);
   const [selectedRegion, setSelectedRegion] = useState(
     pageCache("/", "selectedRegion") ?? "NA"
   );
@@ -56,10 +52,7 @@ export default function Home(props) {
       return;
     }
 
-    if (
-      specificServer &&
-      (twoDigitNumber.length !== 2 || fiveDigitNumber.length !== 5)
-    ) {
+    if (specificServer && !isOnceHumanServerFormatted(server)) {
       setListingSearchMessage(
         "Server information was not properly filled out."
       );
@@ -67,17 +60,16 @@ export default function Home(props) {
       return;
     }
 
+    console.log(server);
+    console.log(specificServer);
+
     setFetchingListings(true);
     setListingResults([]);
-    const combinedSearch = `${mode}${twoDigitNumber.padStart(
-      2,
-      "0"
-    )}-${fiveDigitNumber.padStart(5, "0")}`;
 
     try {
       const response = await axios.get(`/api/search_listings`, {
         params: {
-          server: specificServer ? combinedSearch : null,
+          server: specificServer ? server : null,
           selling_item_id: selectedLookingForItem
             ? selectedLookingForItem.id
             : null,
@@ -98,13 +90,13 @@ export default function Home(props) {
     }
   };
 
-  const handleLookingForItemSelect = (item) => {
+  const handleLookingForItemSelect = (item: any) => {
     setSelectedLookingForItem(item);
     setLookingForItemQuery(item?.name);
     console.log("Selected " + JSON.stringify(item));
   };
 
-  const handleOfferingItemSelect = (item) => {
+  const handleOfferingItemSelect = (item: any) => {
     setSelectedOfferingItem(item);
     setOfferingItemQuery(item?.name);
     console.log("Selected " + JSON.stringify(item));
@@ -126,16 +118,13 @@ export default function Home(props) {
   }, [selectedLookingForItem, selectedOfferingItem]);
 
   useEffect(() => {
-    console.log(listingResults);
     cachePageData("/", "lookingForItemQuery", lookingForItemQuery);
     cachePageData("/", "offeringItemQuery", offeringItemQuery);
     cachePageData("/", "listingResults", listingResults);
     cachePageData("/", "listingSearchMessage", listingSearchMessage);
     cachePageData("/", "selectedLookingForItem", selectedLookingForItem);
     cachePageData("/", "selectedOfferingItem", selectedOfferingItem);
-    cachePageData("/", "mode", mode);
-    cachePageData("/", "twoDigitNumber", twoDigitNumber);
-    cachePageData("/", "fiveDigitNumber", fiveDigitNumber);
+    cachePageData("/", "server", server);
     cachePageData("/", "selectedRegion", selectedRegion);
     cachePageData("/", "specificServer", specificServer);
     cachePageData("/", "removeOldListings", removeOldListings);
@@ -146,9 +135,7 @@ export default function Home(props) {
     listingSearchMessage,
     selectedLookingForItem,
     selectedOfferingItem,
-    mode,
-    twoDigitNumber,
-    fiveDigitNumber,
+    server,
     selectedRegion,
     specificServer,
     removeOldListings,
@@ -189,65 +176,13 @@ export default function Home(props) {
           />
           Search specific server
         </label>
-        <div className="flex items-center">
-          <select
-            value={selectedRegion}
-            onChange={(e) => setSelectedRegion(e.target.value)}
-            className={`p-2 h-10 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
-              !specificServer &&
-              "opacity-80 text-neutral-500 cursor-not-allowed"
-            }`}
-            disabled={!specificServer}
-          >
-            <option value="NA">🇺🇸 NA</option>
-          </select>
-          <select
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-            className={`p-2 h-10 border border-neutral-600 bg-neutral-700 rounded mr-2 ${
-              !specificServer &&
-              "opacity-80 text-neutral-500 cursor-not-allowed"
-            }`}
-            disabled={!specificServer}
-          >
-            <option value="PVE">PVE</option>
-            <option value="PVP">PVP</option>
-          </select>
-          <input
-            type="text"
-            value={twoDigitNumber}
-            onChange={(e) => setTwoDigitNumber(e.target.value)}
-            maxLength={2}
-            placeholder="01"
-            className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded mr-2 w-10 ${
-              !specificServer &&
-              "opacity-80 text-neutral-500 cursor-not-allowed"
-            }`}
-            disabled={!specificServer}
-          />
-          <input
-            type="text"
-            value={fiveDigitNumber}
-            onChange={(e) => setFiveDigitNumber(e.target.value)}
-            maxLength={5}
-            placeholder="00001"
-            className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded w-[70px] ${
-              !specificServer &&
-              "opacity-80 text-neutral-500 cursor-not-allowed"
-            }`}
-            disabled={!specificServer}
-          />
-        </div>
-
-        {/* <label className="text-neutral-300 mt-4 mb-2">
-          <input
-            type="checkbox"
-            checked={removeOldListings}
-            onChange={() => setRemoveOldListings((prevState) => !prevState)}
-            className="mr-1"
-          />
-          Remove listings older than 7 days
-        </label> */}
+        <ServerSelection
+          server={server}
+          setServer={setServer}
+          region={selectedRegion}
+          setRegion={setSelectedRegion}
+          disabled={!specificServer}
+        />
         <div className="flex gap-4 flex-wrap justify-center items-center mt-4 px-4">
           <button
             onClick={() => searchListings()}
@@ -287,9 +222,6 @@ export default function Home(props) {
             </div>
           </>
         )}
-        {/* <button className="fixed lg:right-20 lg:bottom-10 right-7 bottom-7 rounded-full lg:w-[115px] lg:h-[64px] w-[88px] h-[46px] bg-oncehuman-lightRed bg-opacity-70 flex items-center justify-center hover:opacity-80 shadow-md shadow-black">
-          <FaPlus className="text-white lg:h-10 lg:w-10 h-7 w-7" />
-        </button> */}
       </div>
     </main>
   );

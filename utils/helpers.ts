@@ -30,3 +30,15 @@ export const convertSessionToUserData = (session: Session): UserData => {
 
   return userData;
 };
+
+export const isOnceHumanServerFormatted = (server: string) => {
+  const parts = server?.split("-");
+
+  if (parts?.length !== 2) {
+    return false;
+  }
+
+  console.log(parts[0].length)
+
+  return parts[0].length === 5 && parts[1].length === 5;
+};
