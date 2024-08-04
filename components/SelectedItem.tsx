@@ -23,8 +23,7 @@ const SelectedItem: React.FC<ItemProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (value === "") {
-      setInputValue("1");
-      onChangeAmount(1, entry.id);
+      setInputValue("");
       return;
     }
 
@@ -38,6 +37,13 @@ const SelectedItem: React.FC<ItemProps> = ({
     }
     setInputValue(num.toString());
     onChangeAmount(num, entry.id);
+  };
+
+  const handleInputBlur = () => {
+    if (inputValue === "") {
+      setInputValue("1");
+      onChangeAmount(1, entry.id);
+    }
   };
 
   const handleRemoveClick = () => {
@@ -66,6 +72,7 @@ const SelectedItem: React.FC<ItemProps> = ({
               type="number"
               value={inputValue}
               onChange={handleInputChange}
+              onBlur={handleInputBlur}
               min="0"
               max="9999"
               className="ml-2 p-1 rounded bg-slate-800 border-slate-500 border h-7"

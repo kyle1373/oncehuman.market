@@ -11,6 +11,8 @@ import { useState } from "react";
 import { LINKS } from "@constants/constants";
 import SelectedItem from "@components/SelectedItem";
 import { toast } from "react-toastify";
+import ServerSelection from "@components/ServerSelection";
+import { FaArrowDownLong } from "react-icons/fa6";
 
 type PageProps = {
   session: UserData;
@@ -27,6 +29,13 @@ export default function Page({ session, previousListing }: PageProps) {
   const [selectedOfferingItems, setSelectedOfferingItems] = useState<
     { id: number; name: string; amount: number; image: string }[]
   >([]);
+
+  const [server, setServer] = useState<string>("");
+  const [region, setRegion] = useState<string>("NA");
+
+  const [world, setWorld] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [oncehumanusername, setOncehumanusername] = useState<string>("");
 
   setDiscordUser(session);
 
@@ -114,11 +123,16 @@ export default function Page({ session, previousListing }: PageProps) {
     );
   };
 
+  const postListing = async () => {};
+
   return (
     <main className="h-full w-full overflow-y-auto">
-      <div className="flex flex-col items-center relative mb-20">
+      <h1 className="text-center font-bold sm:text-3xl text-2xl mt-10">
+        Create a Listing
+      </h1>
+      <div className="flex flex-col items-center relative mb-20 px-4">
         <SEO title="Create Listing" />
-        <div className="w-full max-w-lg px-4">
+        <div className="w-full max-w-lg">
           <h1 className="mt-8 mb-1 text-neutral-300 text-lg">
             I am offering... (select 1)
           </h1>
@@ -127,7 +141,7 @@ export default function Page({ session, previousListing }: PageProps) {
             cacheKey="/create-item/lookingForItem"
             keepSelected={false}
           />
-          <div className="mt-4 gap-4">
+          <div className="gap-4">
             {selectedOfferingItems.map((entry) => (
               <SelectedItem
                 key={"offering" + entry.id}
@@ -139,7 +153,7 @@ export default function Page({ session, previousListing }: PageProps) {
             ))}
           </div>
         </div>
-        <div className="w-full max-w-lg px-4">
+        <div className="w-full max-w-lg">
           <h1 className="mt-6 mb-1 text-neutral-300 text-lg">
             I am looking for... (select up to 3)
           </h1>
@@ -148,7 +162,7 @@ export default function Page({ session, previousListing }: PageProps) {
             cacheKey="/create-item/offeringItem"
             keepSelected={false}
           />
-          <div className="mt-4">
+          <div className="">
             {selectedAskingItems.map((entry, index) => (
               <SelectedItem
                 key={"asking" + entry.id}
@@ -160,13 +174,92 @@ export default function Page({ session, previousListing }: PageProps) {
             ))}
           </div>
         </div>
-        <h1>INFORMATION</h1>
-        <h1>Region, Server</h1>
-        <h1>World (number)</h1>
-        <h1>Location</h1>
-        <h1>SELLER CONTACT</h1>
-        <h1>Discord (if your username changed, click here [clicks sign in])</h1>
-        <h1>Once Human Username</h1>
+
+        <div className="mt-6 w-full max-w-lg">
+          <h1 className="mb-1 text-neutral-300 text-lg">Server</h1>
+          <ServerSelection
+            server={server}
+            setServer={setServer}
+            region={region}
+            setRegion={setRegion}
+            disabled={false}
+          />
+        </div>
+        <div className={`relative w-full max-w-lg mt-6`}>
+          <h1 className="mb-1 text-neutral-300 text-lg">World</h1>
+          <input
+            type="text"
+            value={world}
+            onChange={(e) => {
+              setWorld(e.target.value);
+            }}
+            placeholder={"Your world number"}
+            className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
+          />
+        </div>
+        <div className={`relative w-full max-w-lg mt-6`}>
+          <h1 className="mb-1 text-neutral-300 text-lg">Location</h1>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => {
+              setLocation(e.target.value);
+            }}
+            placeholder={"Your location in your world"}
+            className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
+          />
+        </div>
+
+        <div className={`relative w-full max-w-lg mt-6`}>
+          <h1 className="mb-1 text-neutral-300 text-lg">Once Human Username</h1>
+          <input
+            type="text"
+            value={oncehumanusername}
+            onChange={(e) => {
+              setOncehumanusername(e.target.value);
+            }}
+            placeholder={"Your username"}
+            className="p-2 border border-neutral-600 bg-neutral-700 rounded w-full"
+          />
+        </div>
+
+        <div className="mt-6 w-full max-w-lg">
+          <h1 className="text-white">
+            Your discord username,{" "}
+            <span className="text-purple-300 font-bold">
+              {session.discord_name}
+            </span>
+            , will also be shown for easy contact. If you changed it recently,{" "}
+            <span
+              onClick={() => signIn("discord")}
+              className="underline hover:text-blue-400 hover:font-bold font-semibold hover:cursor-pointer"
+            >
+              click here to update
+            </span>
+            .
+          </h1>
+        </div>
+
+        <div className="w-full flex justify-center items-center mt-8">
+          <FaArrowDownLong size={25} />
+        </div>
+
+        <div className="mt-8 w-full max-w-lg">
+          <h1 className="text-yellow-200 font-semibold text-center">
+            Please keep this website open to display an{" "}
+            <span className="font-black text-green-400">online</span> status
+          </h1>
+        </div>
+        <div className="mt-4">
+          <button
+            onClick={postListing}
+            className={
+              "bg-green-700 hover:bg-green-600 text-white py-2 px-8 rounded text-base"
+            }
+          >
+            Post Listing
+          </button>
+        </div>
       </div>
     </main>
   );
