@@ -72,15 +72,6 @@ export default function Profile({ user, error }) {
     );
   }
 
-  if (!user) {
-    return (
-      <main className="min-h-screen w-full flex justify-center items-center">
-        <SEO title="User Not Found" />
-        <h1 className="text-center text-xl font-bold mt-5">User not found</h1>
-      </main>
-    );
-  }
-
   return (
     <main className="h-full w-full overflow-y-auto">
       <SEO title={`${user?.discord_name}'s Profile`} />
@@ -154,6 +145,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           user: null,
           error: error.message,
         },
+      };
+    }
+
+    if (!data){
+      return {
+        notFound: true,
       };
     }
 
