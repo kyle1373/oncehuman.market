@@ -9,7 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const userData = await getUserDataServer(req);
+  const userData = await getUserDataServer(req, res);
 
   if (!userData) {
     return res.status(401).json({ error: "Unauthenticated" });

@@ -15,7 +15,7 @@ export default function Home() {
 
 export const getServerSideProps = async ({ req, res }) => {
   try {
-    const userData = await getUserDataServer(req);
+    const userData = await getUserDataServer(req, res);
 
     if (!userData) {
       return {

@@ -143,7 +143,6 @@ const ItemSearchDropdown = ({
   };
 
   const handleItemClick = (item) => {
-    console.log("here")
     onItemSelect(item);
     if (keepSelected) {
       setQuery(item.name);

@@ -359,7 +359,7 @@ export default function Page({
 }
 
 export async function getServerSideProps({ req, res, query }) {
-  const session = await getUserDataServer(req);
+  const session = await getUserDataServer(req, res);
 
   if (!session) {
     return {

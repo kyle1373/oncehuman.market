@@ -31,7 +31,7 @@ export default function Page({ session }: PageProps) {
 }
 
 export async function getServerSideProps({ req, res, query, params }) {
-  const session = await getUserDataServer(req);
+  const session = await getUserDataServer(req, res);
   const listingID = params?.listing_id as string;
 
   if (!session) {
