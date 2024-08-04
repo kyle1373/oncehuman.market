@@ -129,8 +129,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    const session = await getUserDataServer(req);
+
+    if (!session) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
     if (req.method !== "POST") {
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ error: "Method not allowed" });
     }
 
     const data: CreateListingBody = req.body;
@@ -142,8 +147,6 @@ export default async function handler(
       console.log(errors[0]);
       return res.status(400).json({ error: errors[0] });
     }
-
-    const session = await getUserDataServer(req);
 
     const { data: userPulled, error } = await supabaseAdmin
       .from("users")
