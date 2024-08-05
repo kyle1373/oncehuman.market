@@ -7,7 +7,7 @@ export const NEXTAUTH_OPTIONS = {
   callbacks: {
     async session({ session, token }) {
       (session.user as any).id = token.id;
-      (session.user as any).user_id = token.user_id
+      (session.user as any).user_id = token.user_id;
       return session;
     },
     async jwt({ token, user, account }) {
@@ -33,6 +33,12 @@ export const NEXTAUTH_OPTIONS = {
       const discord_email = user.email;
       const discord_image = user.image;
       const discord_name = user.name;
+
+      // Check if any required field is null or undefined
+      if (discord_id == null || discord_email == null || discord_name == null || discord_image == null) {
+        console.error("Missing required user information during sign-in.");
+        throw new Error("Missing required user information.");
+      }
 
       try {
         const { data, error } = await supabaseAdmin
@@ -97,6 +103,8 @@ export const NEXTAUTH_OPTIONS = {
     },
   },
 };
+
+
 export const getUserDataServer = async (req, res): Promise<UserData> => {
   try {
     const session = await getServerSession(req, res, NEXTAUTH_OPTIONS);
