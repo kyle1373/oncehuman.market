@@ -1,3 +1,4 @@
+import { REGIONS_MAP } from "@constants/constants";
 import React, { useState, useEffect } from "react";
 
 interface ServerSelectionProps {
@@ -61,7 +62,11 @@ const ServerSelection: React.FC<ServerSelectionProps> = ({
         }`}
         disabled={disabled}
       >
-        <option value="NA">🇺🇸 NA</option>
+        {Object.entries(REGIONS_MAP).map(([key, flag]) => (
+          <option key={key} value={key}>
+            {flag} {key}
+          </option>
+        ))}
       </select>
       <select
         value={mode}

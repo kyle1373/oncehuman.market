@@ -75,7 +75,7 @@ export default function Home(props) {
             ? selectedLookingForItem.id
             : null,
           asking_item_id: selectedOfferingItem ? selectedOfferingItem.id : null,
-          region: selectedRegion,
+          region: specificServer ? selectedRegion : null,
           filter_old_listings: removeOldListings ? "true" : "false",
         },
       });

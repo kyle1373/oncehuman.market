@@ -18,6 +18,12 @@ export const LOCATIONS_LIST = [
   "Greywater Camp",
 ];
 
-export const REGIONS_LIST = [
-  "NA"
-]
+export const REGIONS_MAP = {
+  "NA": "🇺🇸",
+  "SA": "🇧🇷",
+  "EU": "🇪🇺",
+  "JP": "🇯🇵",
+  "KR": "🇰🇷",
+  "SEA": "🇸🇬",
+  "HMT": "🇹🇼",
+}

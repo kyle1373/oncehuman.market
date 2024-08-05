@@ -1,4 +1,4 @@
-import { LOCATIONS_LIST, REGIONS_LIST } from "@constants/constants";
+import { LOCATIONS_LIST, REGIONS_MAP } from "@constants/constants";
 import { isOnceHumanServerFormatted } from "@utils/helpers";
 import {
   createOrUpdateListing,
@@ -98,7 +98,7 @@ function validateCreateListingBody(data: CreateListingBody) {
   // Validate region
   if (!data.region) {
     errors.push("Region is missing");
-  } else if (!REGIONS_LIST.includes(data.region)) {
+  } else if (!REGIONS_MAP[data.region]) {
     errors.push("Region is invalid");
   }
 
@@ -164,7 +164,7 @@ export default async function handler(
     const errors = validateCreateListingBody(data);
 
     if (errors.length > 0) {
-      console.log(errors)
+      console.log(errors);
       return res.status(400).json({ error: errors[0] });
     }
 
