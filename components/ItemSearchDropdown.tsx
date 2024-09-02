@@ -3,6 +3,7 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { LINKS } from "@constants/constants";
 import { usePageCache } from "@hooks/usePageCache"; // Import usePageCache
+import Link from "next/link";
 
 type ItemSearchDropdownProps = {
   query?: string;
@@ -27,7 +28,8 @@ const ItemSearchDropdown = ({
 
   const [internalQuery, setInternalQuery] = useState(externalQuery);
   const query = externalSetQuery !== undefined ? externalQuery : internalQuery;
-  const setQuery = externalSetQuery !== undefined ? externalSetQuery : setInternalQuery;
+  const setQuery =
+    externalSetQuery !== undefined ? externalSetQuery : setInternalQuery;
 
   const [itemSearchResults, setItemSearchResults] = useState(
     pageCache(cacheKey, `itemSearchResults`) ?? []
@@ -86,6 +88,7 @@ const ItemSearchDropdown = ({
     cachePageData(cacheKey, `itemSearchMessage`, itemSearchMessage);
     cachePageData(cacheKey, `showModal`, showModal);
     cachePageData(cacheKey, `modalActive`, modalActive);
+
     if (keepSelected) {
       cachePageData(cacheKey, `selectedItem`, selectedItem);
     }
@@ -178,32 +181,58 @@ const ItemSearchDropdown = ({
               <ClipLoader color={"#ffffff"} loading={fetchingItems} />
             </div>
           ) : itemSearchResults.length > 0 ? (
-            itemSearchResults.map((category, index) => (
-              <div key={category.id + index} className="p-2">
-                <h3 className="font-bold">{category.name}</h3>
-                {category.items.map((item, index) => (
-                  <div
-                    key={item.id + index}
-                    className={`flex items-center p-2 ${
-                      index !== category.items.length - 1 && "border-b"
-                    } border-neutral-700 cursor-pointer hover:bg-neutral-800 ${
-                      item.id === selectedItem?.id ? "bg-neutral-800" : ""
-                    }`}
-                    onClick={() => handleItemClick(item)}
-                  >
-                    <img
-                      src={LINKS.baseImagePath + item.s3_image_path}
-                      alt={item.name}
-                      className="w-10 h-10 mr-4 rounded"
-                    />
-                    <span>{item.name}</span>
-                  </div>
-                ))}
-              </div>
-            ))
+            <div>
+              {itemSearchResults.map((category, index) => (
+                <div key={category.id + index} className="p-2">
+                  <h3 className="font-bold">{category.name}</h3>
+                  {category.items.map((item, index) => (
+                    <div
+                      key={item.id + index}
+                      className={`flex items-center p-2 ${
+                        index !== category.items.length - 1 && "border-b"
+                      } border-neutral-700 cursor-pointer hover:bg-neutral-800 ${
+                        item.id === selectedItem?.id ? "bg-neutral-800" : ""
+                      }`}
+                      onClick={() => handleItemClick(item)}
+                    >
+                      <img
+                        src={LINKS.baseImagePath + item.s3_image_path}
+                        alt={item.name}
+                        className="w-10 h-10 mr-4 rounded"
+                      />
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <h1 className="text-xs text-neutral-300 text-center mb-4">
+                Don't see your item?{" "}
+                <Link
+                  className="underline hover:font-bold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={LINKS.discord}
+                >
+                  Add it here!
+                </Link>
+              </h1>
+            </div>
           ) : (
             <div className="p-2 text-center text-neutral-400">
               {itemSearchMessage}
+
+              {!!query && (
+                <h1 className="text-xs text-neutral-300 mt-2">
+                  <Link
+                    className="underline hover:font-bold"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={LINKS.discord}
+                  >
+                    Add a new item here!
+                  </Link>
+                </h1>
+              )}
             </div>
           )}
         </div>
