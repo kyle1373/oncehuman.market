@@ -40,7 +40,11 @@ export const isOnceHumanServerFormatted = (server: string) => {
     return false;
   }
 
-  console.log(parts[0].length);
+  // Check if any lowercase letters exist in either part
+  const hasLowercase = (str: string) => /[a-z]/.test(str);
 
-  return parts[0].length === 5 && parts[1].length === 5;
+  // Validate the length and ensure there are no lowercase letters
+  const isValidPart = (part: string) => part.length === 5 && !hasLowercase(part) && /^[A-Z0-9]+$/.test(part);
+
+  return isValidPart(parts[0]) && isValidPart(parts[1]);
 };

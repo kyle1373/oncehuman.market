@@ -41,14 +41,16 @@ const ServerSelection: React.FC<ServerSelectionProps> = ({
   }, [mode, twoDigitNumber, fiveDigitNumber, setServer]);
 
   const handleTwoDigitChange = (value: string) => {
-    if (/^\d{0,2}$/.test(value)) {
-      setTwoDigitNumber(value);
+    const uppercasedValue = value.toUpperCase();
+    if (/^[A-Z0-9]{0,2}$/.test(uppercasedValue)) {
+      setTwoDigitNumber(uppercasedValue);
     }
   };
 
   const handleFiveDigitChange = (value: string) => {
-    if (/^\d{0,5}$/.test(value)) {
-      setFiveDigitNumber(value);
+    const uppercasedValue = value.toUpperCase();
+    if (/^[A-Z0-9]{0,5}$/.test(uppercasedValue)) {
+      setFiveDigitNumber(uppercasedValue);
     }
   };
 
