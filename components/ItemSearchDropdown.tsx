@@ -206,7 +206,7 @@ const ItemSearchDropdown = ({
                 </div>
               ))}
               <h1 className="text-xs text-neutral-300 text-center mb-4">
-                Don't see your item?{" "}
+                {"Don't see your item? "}
                 <Link
                   className="underline hover:font-bold"
                   target="_blank"
