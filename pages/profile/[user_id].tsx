@@ -98,7 +98,7 @@ export default function Profile({ user, error }) {
           <ClipLoader color="#FFFFFF" className="mt-8" size={30} />
         ) : (
           <>
-            <h1 className="mt-8">Listings</h1>
+            <h1 className="mt-8">Showing listings</h1>
             <div className="mt-2 text-neutral-300">
               {listingResults.length > 0 ? (
                 listingResults.map((entry, index) => {
