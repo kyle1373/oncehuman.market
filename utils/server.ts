@@ -145,12 +145,12 @@ export async function getListings({
   server = null,
   sellingItemID = null,
   askingItemID = null,
-  filterOldListings = true,
+  filterOldListings = false,
   sortByRatio = true,
   userID = null,
   listingID = null,
   onlyOpenedListings = true,
-  limit = 150,
+  limit = 500,
 }): Promise<ListingData[]> {
   const { data, error } = await supabaseAdmin.rpc("get_listings", {
     p_asking_item_id: askingItemID,
