@@ -31,6 +31,7 @@ export default async function handler(
     `
       )
       .ilike("name", `%${search}%`)
+      .order("name", { ascending: true, nullsFirst: false })
       .limit(10);
 
     if (error) {
@@ -61,7 +62,9 @@ export default async function handler(
     }, {});
 
     // Convert the grouped data object to an array
-    const result = Object.values(groupedData).sort((a: any, b: any) => a.name.localeCompare(b.name));
+    const result = Object.values(groupedData).sort((a: any, b: any) =>
+      a.name.localeCompare(b.name)
+    );
 
     // Return the grouped search results
     return res.status(200).json(result);
