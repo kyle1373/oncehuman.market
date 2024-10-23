@@ -21,21 +21,37 @@ const ServerSelection: React.FC<ServerSelectionProps> = ({
   const [twoDigitNumber, setTwoDigitNumber] = useState("");
   const [fiveDigitNumber, setFiveDigitNumber] = useState("");
 
+  console.log(server)
   useEffect(() => {
     if (server) {
-      const modePart = server.slice(0, 3);
-      const rest = server.slice(3).split("-");
-      if (rest.length === 2) {
-        setMode(modePart);
-        setTwoDigitNumber(rest[0]);
-        setFiveDigitNumber(rest[1]);
+      if (server.startsWith("W_Winter")) {
+        // For W_Winter mode, we only need the fiveDigitNumber part
+        const rest = server.split("-");
+        if (rest.length === 2) {
+          setMode("W_Winter");
+          setFiveDigitNumber(rest[1]);
+        }
+      } else {
+        // For other modes, we expect the format to be like PVE01-XXXXX
+        const modePart = server.slice(0, 3);
+        const rest = server.slice(3).split("-");
+        if (rest.length === 2) {
+          setMode(modePart);
+          setTwoDigitNumber(rest[0]);
+          setFiveDigitNumber(rest[1]);
+        }
       }
     }
   }, [server]);
 
   useEffect(() => {
     if (mounted) {
-      setServer(`${mode}${twoDigitNumber}-${fiveDigitNumber}`);
+      // Only update the server format based on the selected mode
+      if (mode === "W_Winter") {
+        setServer(`${mode}-${fiveDigitNumber}`);
+      } else {
+        setServer(`${mode}${twoDigitNumber}-${fiveDigitNumber}`);
+      }
     }
     setMounted(true);
   }, [mode, twoDigitNumber, fiveDigitNumber, setServer]);
@@ -55,7 +71,7 @@ const ServerSelection: React.FC<ServerSelectionProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center flex-wrap px-3 justify-center gap-3">
       <select
         value={region}
         onChange={(e) => setRegion(e.target.value)}
@@ -80,17 +96,23 @@ const ServerSelection: React.FC<ServerSelectionProps> = ({
       >
         <option value="PVE">PVE</option>
         <option value="PVP">PVP</option>
+        <option value="W_Winter">W_Winter</option>
       </select>
-      <input
-        type="text"
-        value={twoDigitNumber}
-        onChange={(e) => handleTwoDigitChange(e.target.value)}
-        placeholder="01"
-        className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded w-10 ${
-          disabled ? "opacity-80 text-neutral-500 cursor-not-allowed" : ""
-        }`}
-        disabled={disabled}
-      />
+
+      {/* Conditionally render the two-digit input only if mode is not W_Winter */}
+      {mode !== "W_Winter" && (
+        <input
+          type="text"
+          value={twoDigitNumber}
+          onChange={(e) => handleTwoDigitChange(e.target.value)}
+          placeholder="01"
+          className={`p-2 border h-10 border-neutral-600 bg-neutral-700 rounded w-10 ${
+            disabled ? "opacity-80 text-neutral-500 cursor-not-allowed" : ""
+          }`}
+          disabled={disabled}
+        />
+      )}
+      
       <input
         type="text"
         value={fiveDigitNumber}

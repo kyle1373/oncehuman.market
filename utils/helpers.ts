@@ -34,17 +34,26 @@ export const convertSessionToUserData = (session: Session): UserData => {
 };
 
 export const isOnceHumanServerFormatted = (server: string) => {
-  const parts = server?.split("-");
+  if (!server) return false;
 
-  if (parts?.length !== 2) {
-    return false;
-  }
+  // Split the server string by the first hyphen only
+  const [firstPart, secondPart] = server.split(/-(.+)/);
 
-  // Check if any lowercase letters exist in either part
+  // First part validation:
+  // - "W_Winter" is allowed (special case with mixed-case and underscore)
+  // - For other formats (e.g., "PVE01"), it must be exactly 5 alphanumeric characters (A-Z, 0-9)
+  const isValidFirstPart = (part: string) => {
+    if (part === "W_Winter") {
+      return true; // Valid special case for "W_Winter"
+    }
+    return /^[A-Z0-9]{5}$/.test(part); // Valid if exactly 5 alphanumeric characters
+  };
+
+  // Second part must be 5 characters long, no lowercase letters, and alphanumeric only
   const hasLowercase = (str: string) => /[a-z]/.test(str);
+  const isValidSecondPart = (part: string) =>
+    part.length === 5 && !hasLowercase(part) && /^[A-Z0-9]+$/.test(part);
 
-  // Validate the length and ensure there are no lowercase letters
-  const isValidPart = (part: string) => part.length === 5 && !hasLowercase(part) && /^[A-Z0-9]+$/.test(part);
-
-  return isValidPart(parts[0]) && isValidPart(parts[1]);
+  // Ensure both the first and second parts pass their respective validations
+  return isValidFirstPart(firstPart) && isValidSecondPart(secondPart);
 };
